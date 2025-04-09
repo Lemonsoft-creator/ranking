@@ -19,3 +19,10 @@ def registrieren():
 def messung():
     return FileResponse(os.path.join("static", "messung_eintragen.html"))
 
+from fastapi import FastAPI, Request, Form, Depends
+from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, create_engine, desc
+from sqlalchemy.orm import sessionmaker, declarative_base, relationship
+import os
+from datetime import datetime
