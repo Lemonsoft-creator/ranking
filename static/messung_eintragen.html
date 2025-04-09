@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>💥 Messung eintragen</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #f1f5f9;
+      padding: 40px;
+    }
+    .container {
+      max-width: 500px;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      margin: auto;
+    }
+    h2 {
+      text-align: center;
+      color: #1f2937;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    button {
+      margin-top: 25px;
+      padding: 12px;
+      background: #3b82f6;
+      border: none;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      border-radius: 8px;
+      width: 100%;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #2563eb;
+    }
+  </style>
+  <script>
+    async function ladeKunden() {
+      const response = await fetch("/kunden_json");
+      const kunden = await response.json();
+      const select = document.getElementById("kunde_id");
+
+      kunden.forEach(k => {
+        const option = document.createElement("option");
+        option.value = k.id;
+        option.text = `${k.vorname} ${k.name} (${k.plz_ort})`;
+        select.appendChild(option);
+      });
+    }
+
+    window.onload = ladeKunden;
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h2>💥 Messung eintragen</h2>
+    <form action="/messung" method="post">
+      <label>Kunde auswählen</label>
+      <select name="kunde_id" id="kunde_id" required>
+        <option value="">Bitte wählen...</option>
+      </select>
+
+      <label>Max. Schlagkraft (kg)</label>
+      <input type="number" name="max_schlagkraft" step="0.1" required placeholder="z. B. 520.5">
+
+      <label>Durchschnittliche Schlagkraft (kg)</label>
+      <input type="number" name="avg_schlagkraft" step="0.1" required placeholder="z. B. 480.3">
+
+      <button type="submit">💾 Messung speichern</button>
+    </form>
+  </div>
+</body>
+</html>
