@@ -121,7 +121,10 @@ def kundenliste():
     html += "</table>"
 
     return html
-    @app.get("/kunden_json")
+   
+from fastapi.responses import JSONResponse
+
+@app.get("/kunden_json")
 def kunden_json():
     db = SessionLocal()
     kunden = db.query(Kunde).all()
