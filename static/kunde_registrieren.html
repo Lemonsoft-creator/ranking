@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>👤 Kunde registrieren</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #f3f4f6;
+      padding: 40px;
+    }
+    .container {
+      max-width: 600px;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      margin: auto;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      margin-top: 25px;
+      padding: 12px;
+      background: #10b981;
+      border: none;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      border-radius: 8px;
+      width: 100%;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #059669;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>👤 Kunde registrieren</h2>
+    <form action="/kunde" method="post">
+      <label>Vorname</label><input type="text" name="vorname" required>
+      <label>Name</label><input type="text" name="name" required>
+      <label>Pseudonym</label><input type="text" name="pseudonym" required>
+      <label>Alter</label><input type="number" name="alter" required>
+      <label>Geschlecht</label>
+      <select name="geschlecht" required>
+        <option value="maennlich">♂️ Männlich</option>
+        <option value="weiblich">♀️ Weiblich</option>
+      </select>
+      <label>Gewicht (kg)</label><input type="number" name="gewicht" required>
+      <label>Schlaghand</label>
+      <select name="schlaghand" required>
+        <option value="links">👈 Links</option>
+        <option value="rechts">👉 Rechts</option>
+      </select>
+      <label>Schlagart</label>
+      <select name="schlagart" required>
+        <option value="gerade">🎯 Gerade</option>
+        <option value="haken">🔄 Haken</option>
+        <option value="uppercut">⬆️ Uppercut</option>
+      </select>
+      <label>E-Mail</label><input type="email" name="email">
+      <label>PLZ & Ort</label><input type="text" name="plz_ort" required>
+      <button type="submit">📋 Registrieren</button>
+    </form>
+  </div>
+</body>
+</html>
