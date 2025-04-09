@@ -121,3 +121,10 @@ def kundenliste():
     html += "</table>"
 
     return html
+    @app.get("/kunden_json")
+def kunden_json():
+    db = SessionLocal()
+    kunden = db.query(Kunde).all()
+    db.close()
+    return [{"id": k.id, "vorname": k.vorname, "name": k.name, "plz_ort": k.plz_ort} for k in kunden]
+
