@@ -1,3 +1,7 @@
+from pathlib import Path
+
+main_py_path = Path("/mnt/data/main_postgres_ready.py")
+main_py_code = '''\
 from fastapi import FastAPI, Form
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -6,14 +10,13 @@ from sqlalchemy.orm import sessionmaker, declarative_base, relationship
 import os
 from datetime import datetime
 
-# --- Datenbank Setup ---
-import os
+# --- PostgreSQL Datenbank-Verbindung ---
 DATABASE_URL = os.getenv("DATABASE_URL")
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
 
-# --- Modelle ---
+# --- Datenbank-Modelle ---
 class Kunde(Base):
     __tablename__ = "kunden"
     id = Column(Integer, primary_key=True, index=True)
@@ -38,13 +41,14 @@ class Messung(Base):
     datum = Column(String, default=str(datetime.now()))
     kunde = relationship("Kunde", back_populates="messungen")
 
+# --- Datenbank-Tabellen anlegen ---
 Base.metadata.create_all(bind=engine)
 
 # --- FastAPI App ---
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# --- Seitenrouten ---
+# --- Routen für Seiten ---
 @app.get("/")
 def root():
     return FileResponse(os.path.join("static", "rangliste.html"))
@@ -106,6 +110,11 @@ async def messung_eintragen(
     db.commit()
     db.close()
     return RedirectResponse(url="/", status_code=302)
+'''
+
+main_py_path.write_text(main_py_code)
+main_py_path
+
 
 
 
