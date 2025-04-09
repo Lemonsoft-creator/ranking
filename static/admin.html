@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>🛠️ Admin Cockpit</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+      padding: 40px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      margin-bottom: 30px;
+    }
+    .stat {
+      background: white;
+      padding: 20px;
+      margin: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      min-width: 200px;
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      margin-top: 30px;
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
+      background: #3b82f6;
+      color: white;
+    }
+    button {
+      padding: 6px 12px;
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #dc2626;
+    }
+  </style>
+  <script>
+    async function ladeDashboard() {
+      const stats = await fetch('/admin_daten').then(r => r.json());
+      document.getElementById("gesamt").innerText = stats.anzahl;
+      document.getElementById("maenner").innerText = stats.maenner;
+      document.getElementById("frauen").innerText = stats.frauen;
+      document.getElementById("max_m").innerText = stats.max_mann + " kg";
+      document.getElementById("max_f").innerText = stats.max_frau + " kg";
+
+      const tbody = document.getElementById("kundentabelle");
+      tbody.innerHTML = "";
+      stats.kunden.forEach(k => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${k.id}</td>
+          <td>${k.pseudonym}</td>
+          <td>${k.vorname}</td>
+          <td>${k.name}</td>
+          <td>${k.geschlecht}</td>
+          <td><button onclick="loescheKunde(${k.id})">Löschen</button></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    async function loescheKunde(id) {
+      if (confirm("Kunde wirklich löschen?")) {
+        await fetch('/admin_loeschen?id=' + id);
+        ladeDashboard();
+      }
+    }
+
+    window.onload = ladeDashboard;
+  </script>
+</head>
+<body>
+  <h1>🛠️ Helfer-Cockpit</h1>
+  <div class="stats">
+    <div class="stat"><strong>👥 Kunden gesamt</strong><br><span id="gesamt">...</span></div>
+    <div class="stat"><strong>👨 Männer</strong><br><span id="maenner">...</span></div>
+    <div class="stat"><strong>👩 Frauen</strong><br><span id="frauen">...</span></div>
+    <div class="stat"><strong>🥊 Max Schlagkraft Männer</strong><br><span id="max_m">...</span></div>
+    <div class="stat"><strong>🥊 Max Schlagkraft Frauen</strong><br><span id="max_f">...</span></div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Pseudonym</th><th>Vorname</th><th>Name</th><th>Geschlecht</th><th>Aktion</th></tr>
+    </thead>
+    <tbody id="kundentabelle">
+      <!-- Kunden werden hier eingefügt -->
+    </tbody>
+  </table>
+</body>
+</html>
