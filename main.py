@@ -106,3 +106,18 @@ async def messung_eintragen(
     db.commit()
     db.close()
     return RedirectResponse(url="/", status_code=302)
+from fastapi.responses import HTMLResponse
+
+@app.get("/kunden", response_class=HTMLResponse)
+def kundenliste():
+    db = SessionLocal()
+    kunden = db.query(Kunde).all()
+    db.close()
+
+    html = "<h2>🆔 Kundenübersicht</h2><table border='1' cellpadding='8' style='font-family:sans-serif;'>"
+    html += "<tr><th>ID</th><th>Pseudonym</th><th>Vorname</th><th>Name</th></tr>"
+    for k in kunden:
+        html += f"<tr><td>{k.id}</td><td>{k.pseudonym}</td><td>{k.vorname}</td><td>{k.name}</td></tr>"
+    html += "</table>"
+
+    return html
