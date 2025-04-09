@@ -146,4 +146,3 @@ def rangliste_daten():
         })
 
     return rangliste
-
