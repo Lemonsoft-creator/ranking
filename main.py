@@ -185,3 +185,32 @@ def admin_loeschen(id: int):
         db.commit()
     db.close()
     return RedirectResponse(url="/admin", status_code=302)
+
+from fastapi.responses import StreamingResponse
+import csv
+from io import StringIO
+
+@app.get("/export_csv")
+def export_csv():
+    db = SessionLocal()
+    kunden = db.query(Kunde).all()
+    db.close()
+
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerow([
+        "ID", "Name", "Vorname", "Pseudonym", "Alter", "Geschlecht",
+        "Gewicht", "Schlaghand", "Schlagart", "Email", "PLZ/Ort"
+    ])
+
+    for k in kunden:
+        writer.writerow([
+            k.id, k.name, k.vorname, k.pseudonym, k.alter, k.geschlecht,
+            k.gewicht, k.schlaghand, k.schlagart, k.email, k.plz_ort
+        ])
+
+    output.seek(0)
+    return StreamingResponse(output, media_type="text/csv", headers={
+        "Content-Disposition": "attachment; filename=kunden_export.csv"
+    })
+
