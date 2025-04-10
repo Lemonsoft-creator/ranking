@@ -172,10 +172,10 @@ def admin():
 def admin_daten():
     db = SessionLocal()
     anzahl = db.query(Kunde).count()
-    maenner = db.query(Kunde).filter(Kunde.geschlecht.ilike("mann")).count()
-    frauen = db.query(Kunde).filter(Kunde.geschlecht.ilike("frau")).count()
-    max_mann = db.query(func.max(Messung.max_schlagkraft)).join(Kunde).filter(Kunde.geschlecht.ilike("mann")).scalar() or 0
-    max_frau = db.query(func.max(Messung.max_schlagkraft)).join(Kunde).filter(Kunde.geschlecht.ilike("frau")).scalar() or 0
+    maenner = db.query(Kunde).filter(Kunde.geschlecht.ilike("maennlich")).count()
+    frauen = db.query(Kunde).filter(Kunde.geschlecht.ilike("weiblich")).count()
+    max_mann = db.query(func.max(Messung.max_schlagkraft)).join(Kunde).filter(Kunde.geschlecht.ilike("maennlich")).scalar() or 0
+    max_frau = db.query(func.max(Messung.max_schlagkraft)).join(Kunde).filter(Kunde.geschlecht.ilike("weiblich")).scalar() or 0
     kunden = db.query(Kunde).all()
     db.close()
     return {
