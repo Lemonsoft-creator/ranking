@@ -110,17 +110,17 @@ def rangliste_daten():
     messungen = db.query(Messung).options(joinedload(Messung.kunde)).order_by(desc(Messung.max_schlagkraft)).all()
 
     def gewichtsklasse(geschlecht, gewicht):
-    if geschlecht == "Maennlich":
-        grenzen = [45, 48, 54, 57, 60, 63.5, 67, 71, 75, 81, 86, 91]
-    elif geschlecht == "Weiblich":
-        grenzen = [45, 48, 51, 54, 57, 60, 63.5, 67, 71, 75, 81]
-    else:
-        return "+Unbekannt"
+        if geschlecht == "Maennlich":
+            grenzen = [45, 48, 54, 57, 60, 63.5, 67, 71, 75, 81, 86, 91]
+        elif geschlecht == "Weiblich":
+            grenzen = [45, 48, 51, 54, 57, 60, 63.5, 67, 71, 75, 81]
+        else:
+            return "+Unbekannt"
 
-    for grenze in grenzen:
-        if gewicht <= grenze:
-            return f"-{grenze}kg"
-    return f"+{grenzen[-1]}kg"
+        for grenze in grenzen:
+            if gewicht <= grenze:
+                return f"-{grenze}kg"
+        return f"+{grenzen[-1]}kg"
 
     rangliste = {}
     for messung in messungen:
@@ -134,6 +134,7 @@ def rangliste_daten():
             "pseudonym": kunde.pseudonym,
             "max_schlagkraft": messung.max_schlagkraft
         })
+
     db.close()
     return rangliste
 
