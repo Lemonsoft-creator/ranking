@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Form, Request
+from fastapi.responses import StreamingResponse
 from fastapi.responses import FileResponse, RedirectResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, create_engine, desc, func
@@ -200,6 +201,33 @@ def export_csv():
     output.seek(0)
     return StreamingResponse(output, media_type="text/csv", headers={
         "Content-Disposition": "attachment; filename=kunden_export.csv"
+    })
+
+@app.get("/export_messung")
+def export_messung():
+    db = SessionLocal()
+    kunden = db.query(Kunde).all()
+    messungen = db.query(Messung).all()
+    db.close()
+
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerow([
+        "Kunden-ID", "Pseudonym", "Vorname", "Nachname", "Geschlecht",
+        "Max. Schlagkraft (kg)", "Ø Schlagkraft (kg)", "Datum"
+    ])
+
+    for kunde in kunden:
+        for messung in messungen:
+            if messung.kunde_id == kunde.id:
+                writer.writerow([
+                    kunde.id, kunde.pseudonym, kunde.vorname, kunde.name, kunde.geschlecht,
+                    messung.max_schlagkraft, messung.avg_schlagkraft, messung.datum
+                ])
+
+    output.seek(0)
+    return StreamingResponse(output, media_type="text/csv", headers={
+        "Content-Disposition": "attachment; filename=messung_export.csv"
     })
 
 @app.get("/admin_loeschen")
