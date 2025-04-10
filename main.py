@@ -130,7 +130,7 @@ def rangliste_daten():
         kunde = messung.kunde
         if not kunde:
             continue
-        geschlecht = kunde.geschlecht.capitalize()
+        geschlecht = kunde.geschlecht.strip().capitalize()
         klasse = gewichtsklasse(geschlecht, kunde.gewicht)
         key = f"{geschlecht} - {klasse}"
 
@@ -147,23 +147,22 @@ def rangliste_daten():
     for teilnehmer in rang_ungeordnet.values():
         teilnehmer.sort(key=lambda x: x["max_schlagkraft"], reverse=True)
 
-# Sortierreihenfolge definieren
-def sort_key(k):
-    geschlecht, klasse = k.split(" - ")
-    gkl = klasse.replace("kg", "")
+    # Sortierreihenfolge definieren
+    def sort_key(k):
+        try:
+            geschlecht, klasse = k.split(" - ")
+            gkl = klasse.replace("kg", "")
+            wert = float(gkl.replace("+", "").replace("-", ""))
+        except Exception:
+            return (9, 9999)
 
-    try:
-        wert = float(gkl.replace("+", "").replace("-", ""))
-    except ValueError:
-        wert = 9999  # Unbekannt ganz hinten
+        return (
+            0 if geschlecht == "Maennlich" else 1,
+            -wert if "+" in gkl else wert
+        )
 
-    return (
-        0 if geschlecht == "Maennlich" else 1,  # Männer zuerst
-        -wert if "+" in gkl else wert           # Gewicht absteigend für +
-    )
-
-    # Sortiert zurückgeben
     return dict(sorted(rang_ungeordnet.items(), key=sort_key))
+
 
 @app.get("/admin")
 def admin():
