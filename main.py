@@ -147,15 +147,20 @@ def rangliste_daten():
     for teilnehmer in rang_ungeordnet.values():
         teilnehmer.sort(key=lambda x: x["max_schlagkraft"], reverse=True)
 
-    # Sortierreihenfolge definieren
-    def sort_key(k):
-        geschlecht, klasse = k.split(" - ")
-        gkl = klasse.replace("kg", "")
+# Sortierreihenfolge definieren
+def sort_key(k):
+    geschlecht, klasse = k.split(" - ")
+    gkl = klasse.replace("kg", "")
+
+    try:
         wert = float(gkl.replace("+", "").replace("-", ""))
-        return (
-            0 if geschlecht == "Maennlich" else 1,  # Männer zuerst
-            -wert if "+" in gkl else wert  # Gewicht absteigend für +
-        )
+    except ValueError:
+        wert = 9999  # Unbekannt ganz hinten
+
+    return (
+        0 if geschlecht == "Maennlich" else 1,  # Männer zuerst
+        -wert if "+" in gkl else wert           # Gewicht absteigend für +
+    )
 
     # Sortiert zurückgeben
     return dict(sorted(rang_ungeordnet.items(), key=sort_key))
