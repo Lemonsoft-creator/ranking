@@ -133,7 +133,7 @@ def rangliste_daten():
         if not kunde:
             continue
 
-        geschlecht = kunde.geschlecht
+        geschlecht = kunde.geschlecht.capitalize()
         klasse = gewichtsklasse(geschlecht, kunde.gewicht)
         key = f"{geschlecht} - {klasse}"
 
