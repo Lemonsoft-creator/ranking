@@ -19,16 +19,27 @@
       font-size: 1.8rem;
     }
 
+    .abschnitt {
+      margin-top: 2rem;
+    }
+
+    .abschnitt h2 {
+      font-size: 1.3rem;
+      border-bottom: 2px solid #3b82f6;
+      margin-bottom: 1rem;
+      padding-bottom: 0.3rem;
+    }
+
     .gruppe {
       background: white;
       border-radius: 12px;
       padding: 1rem;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      margin-bottom: 1.2rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     }
 
-    .gruppe h2 {
-      font-size: 1.2rem;
+    .gruppe h3 {
+      font-size: 1.1rem;
       margin-bottom: 0.75rem;
       color: #111827;
       border-bottom: 1px solid #e5e7eb;
@@ -38,7 +49,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 1rem;
+      font-size: 0.95rem;
     }
 
     th, td {
@@ -62,7 +73,7 @@
       h1 {
         font-size: 1.5rem;
       }
-      .gruppe h2 {
+      .gruppe h3 {
         font-size: 1rem;
       }
     }
@@ -70,18 +81,42 @@
 </head>
 <body>
   <h1>🏆 PowerKube Rangliste</h1>
-  <div id="container"></div>
+
+  <div class="abschnitt" id="maennlich">
+    <h2>👨 Männer</h2>
+  </div>
+
+  <div class="abschnitt" id="weiblich">
+    <h2>👩 Frauen</h2>
+  </div>
 
   <script>
     fetch("/rangliste_daten")
       .then(response => response.json())
       .then(data => {
-        const container = document.getElementById("container");
+        const sortierteKeys = Object.keys(data).sort((a, b) => {
+          const [geschlechtA, klasseA] = a.split(" - ");
+          const [geschlechtB, klasseB] = b.split(" - ");
 
-        Object.entries(data).forEach(([gruppe, teilnehmer]) => {
+          const val = klasse => {
+            const num = parseFloat(klasse.replace("+", "").replace("-", "").replace("kg", ""));
+            return klasse.includes("+") ? num + 1000 : num;
+          };
+
+          if (geschlechtA !== geschlechtB) {
+            return geschlechtA === "Maennlich" ? -1 : 1;
+          }
+
+          return val(klasseB) - val(klasseA);
+        });
+
+        sortierteKeys.forEach(key => {
+          const [geschlecht, klasse] = key.split(" - ");
+          const teilnehmer = data[key];
+
           const block = document.createElement("div");
           block.className = "gruppe";
-          block.innerHTML = `<h2>👤 ${gruppe}</h2>
+          block.innerHTML = `<h3>${klasse}</h3>
             <table>
               <thead><tr><th>Platz</th><th>Pseudonym</th><th>💪 Schlagkraft (kg)</th></tr></thead>
               <tbody>
@@ -95,9 +130,11 @@
                 }).join("")}
               </tbody>
             </table>`;
-          container.appendChild(block);
+
+          document.getElementById(geschlecht.toLowerCase()).appendChild(block);
         });
       });
   </script>
 </body>
 </html>
+
