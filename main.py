@@ -111,50 +111,54 @@ def kunden_json():
 def rangliste_daten():
     db = SessionLocal()
 
-    # Gewichtsklassen Definition
     gewichtsklassen = {
-        "Maennlich": [45, 48, 54, 57, 60, 63.5, 67, 71, 75, 81, 86, 91],
-        "Weiblich": [45, 48, 51, 54, 57, 60, 63.5, 67, 71, 75, 81]
+        "Maennlich": [91, 86, 81, 75, 71, 67, 63.5, 60, 57, 54, 48, 45],
+        "Weiblich": [81, 75, 71, 67, 63.5, 60, 57, 54, 51, 48, 45]
     }
 
-    # Hilfsfunktion zur Klassenzuweisung
     def gewichtsklasse(geschlecht, gewicht):
         grenzen = gewichtsklassen.get(geschlecht, [])
-        for grenze in grenzen:
-            if gewicht <= grenze:
-                return f"-{grenze}kg"
-        return f"+{grenzen[-1]}kg" if grenzen else "Unbekannt"
+        for g in sorted(grenzen):
+            if gewicht <= g:
+                return f"-{g}kg"
+        return f"+{grenzen[0]}kg"
 
-    # Rangliste vorbereiten
-    rangliste = {}
-
-    # Messungen mit Kunden laden
+    rang_ungeordnet = {}
     messungen = db.query(Messung).options(joinedload(Messung.kunde)).all()
 
     for messung in messungen:
         kunde = messung.kunde
         if not kunde:
             continue
-
         geschlecht = kunde.geschlecht.capitalize()
         klasse = gewichtsklasse(geschlecht, kunde.gewicht)
         key = f"{geschlecht} - {klasse}"
 
-        if key not in rangliste:
-            rangliste[key] = []
+        if key not in rang_ungeordnet:
+            rang_ungeordnet[key] = []
 
-        rangliste[key].append({
+        rang_ungeordnet[key].append({
             "pseudonym": kunde.pseudonym,
             "max_schlagkraft": messung.max_schlagkraft
         })
 
     db.close()
 
-    # Alle Gruppen sortieren (nach Schlagkraft)
-    for gruppe in rangliste:
-        rangliste[gruppe].sort(key=lambda x: x["max_schlagkraft"], reverse=True)
+    for teilnehmer in rang_ungeordnet.values():
+        teilnehmer.sort(key=lambda x: x["max_schlagkraft"], reverse=True)
 
-    return rangliste
+    # Sortierreihenfolge definieren
+    def sort_key(k):
+        geschlecht, klasse = k.split(" - ")
+        gkl = klasse.replace("kg", "")
+        wert = float(gkl.replace("+", "").replace("-", ""))
+        return (
+            0 if geschlecht == "Maennlich" else 1,  # Männer zuerst
+            -wert if "+" in gkl else wert  # Gewicht absteigend für +
+        )
+
+    # Sortiert zurückgeben
+    return dict(sorted(rang_ungeordnet.items(), key=sort_key))
 
 @app.get("/admin")
 def admin():
