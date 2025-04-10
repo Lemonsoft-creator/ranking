@@ -107,35 +107,50 @@ def kunden_json():
 @app.get("/rangliste_daten")
 def rangliste_daten():
     db = SessionLocal()
-    messungen = db.query(Messung).options(joinedload(Messung.kunde)).order_by(desc(Messung.max_schlagkraft)).all()
 
+    # Gewichtsklassen Definition
+    gewichtsklassen = {
+        "Maennlich": [45, 48, 54, 57, 60, 63.5, 67, 71, 75, 81, 86, 91],
+        "Weiblich": [45, 48, 51, 54, 57, 60, 63.5, 67, 71, 75, 81]
+    }
+
+    # Hilfsfunktion zur Klassenzuweisung
     def gewichtsklasse(geschlecht, gewicht):
-        if geschlecht == "Maennlich":
-            grenzen = [45, 48, 54, 57, 60, 63.5, 67, 71, 75, 81, 86, 91]
-        elif geschlecht == "Weiblich":
-            grenzen = [45, 48, 51, 54, 57, 60, 63.5, 67, 71, 75, 81]
-        else:
-            return "+Unbekannt"
-
+        grenzen = gewichtsklassen.get(geschlecht, [])
         for grenze in grenzen:
             if gewicht <= grenze:
                 return f"-{grenze}kg"
-        return f"+{grenzen[-1]}kg"
+        return f"+{grenzen[-1]}kg" if grenzen else "Unbekannt"
 
+    # Rangliste vorbereiten
     rangliste = {}
+
+    # Messungen mit Kunden laden
+    messungen = db.query(Messung).options(joinedload(Messung.kunde)).all()
+
     for messung in messungen:
         kunde = messung.kunde
-        klasse = gewichtsklasse(kunde.geschlecht, kunde.gewicht)
-        geschlecht = kunde.geschlecht.capitalize()
+        if not kunde:
+            continue
+
+        geschlecht = kunde.geschlecht
+        klasse = gewichtsklasse(geschlecht, kunde.gewicht)
         key = f"{geschlecht} - {klasse}"
+
         if key not in rangliste:
             rangliste[key] = []
+
         rangliste[key].append({
             "pseudonym": kunde.pseudonym,
             "max_schlagkraft": messung.max_schlagkraft
         })
 
     db.close()
+
+    # Alle Gruppen sortieren (nach Schlagkraft)
+    for gruppe in rangliste:
+        rangliste[gruppe].sort(key=lambda x: x["max_schlagkraft"], reverse=True)
+
     return rangliste
 
 @app.get("/admin")
