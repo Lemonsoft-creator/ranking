@@ -1,13 +1,14 @@
-
-from fastapi import FastAPI, Form
-from fastapi.responses import FileResponse, RedirectResponse, StreamingResponse
+ from fastapi import FastAPI, Form, Request
+from fastapi.responses import FileResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, create_engine, desc, func
 from sqlalchemy.orm import sessionmaker, declarative_base, relationship, joinedload
-from io import StringIO
-import csv
 import os
 from datetime import datetime
+from datetime import datetime
+from fastapi.responses import StreamingResponse
+import csv
+from io import StringIO
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 engine = create_engine(DATABASE_URL)
@@ -100,6 +101,85 @@ async def messung_eintragen(
     db.close()
     return RedirectResponse(url="/", status_code=302)
 
+@app.get("/kunden_json")
+def kunden_json():
+    db = SessionLocal()
+    kunden = db.query(Kunde).all()
+    db.close()
+    return [{"id": k.id, "vorname": k.vorname, "name": k.name, "plz_ort": k.plz_ort} for k in kunden]
+
+@app.get("/rangliste_daten")
+def rangliste_daten():
+    db = SessionLocal()
+
+    # Gewichtsklassen Definition
+    gewichtsklassen = {
+        "Maennlich": [45, 48, 54, 57, 60, 63.5, 67, 71, 75, 81, 86, 91],
+        "Weiblich": [45, 48, 51, 54, 57, 60, 63.5, 67, 71, 75, 81]
+    }
+
+    # Hilfsfunktion zur Klassenzuweisung
+    def gewichtsklasse(geschlecht, gewicht):
+        grenzen = gewichtsklassen.get(geschlecht, [])
+        for grenze in grenzen:
+            if gewicht <= grenze:
+                return f"-{grenze}kg"
+        return f"+{grenzen[-1]}kg" if grenzen else "Unbekannt"
+
+    # Rangliste vorbereiten
+    rangliste = {}
+
+    # Messungen mit Kunden laden
+    messungen = db.query(Messung).options(joinedload(Messung.kunde)).all()
+
+    for messung in messungen:
+        kunde = messung.kunde
+        if not kunde:
+            continue
+
+        geschlecht = kunde.geschlecht.capitalize()
+        klasse = gewichtsklasse(geschlecht, kunde.gewicht)
+        key = f"{geschlecht} - {klasse}"
+
+        if key not in rangliste:
+            rangliste[key] = []
+
+        rangliste[key].append({
+            "pseudonym": kunde.pseudonym,
+            "max_schlagkraft": messung.max_schlagkraft
+        })
+
+    db.close()
+
+    # Alle Gruppen sortieren (nach Schlagkraft)
+    for gruppe in rangliste:
+        rangliste[gruppe].sort(key=lambda x: x["max_schlagkraft"], reverse=True)
+
+    return rangliste
+
+@app.get("/admin")
+def admin():
+    return FileResponse(os.path.join("static", "admin.html"))
+
+@app.get("/admin_daten")
+def admin_daten():
+    db = SessionLocal()
+    anzahl = db.query(Kunde).count()
+    maenner = db.query(Kunde).filter(Kunde.geschlecht.ilike("mann")).count()
+    frauen = db.query(Kunde).filter(Kunde.geschlecht.ilike("frau")).count()
+    max_mann = db.query(func.max(Messung.max_schlagkraft)).join(Kunde).filter(Kunde.geschlecht.ilike("mann")).scalar() or 0
+    max_frau = db.query(func.max(Messung.max_schlagkraft)).join(Kunde).filter(Kunde.geschlecht.ilike("frau")).scalar() or 0
+    kunden = db.query(Kunde).all()
+    db.close()
+    return {
+        "anzahl": anzahl,
+        "maenner": maenner,
+        "frauen": frauen,
+        "max_mann": round(max_mann, 1),
+        "max_frau": round(max_frau, 1),
+        "kunden": [{"id": k.id, "pseudonym": k.pseudonym, "vorname": k.vorname, "name": k.name, "geschlecht": k.geschlecht} for k in kunden]
+    }
+
 @app.get("/export_csv")
 def export_csv():
     db = SessionLocal()
@@ -123,3 +203,14 @@ def export_csv():
     return StreamingResponse(output, media_type="text/csv", headers={
         "Content-Disposition": "attachment; filename=kunden_export.csv"
     })
+
+@app.get("/admin_loeschen")
+def admin_loeschen(id: int):
+    db = SessionLocal()
+    kunde = db.query(Kunde).filter(Kunde.id == id).first()
+    if kunde:
+        db.delete(kunde)
+        db.commit()
+    db.close()
+    return RedirectResponse(url="/admin", status_code=302)
+
