@@ -9,5 +9,8 @@ Dieses Kapitel soll einen Überblick darüber geben, mit welchen APIs und Techno
 
 #### Python APIs
 ##### FastAPI
+- Links:
+    -[Build a REST API](https://www.youtube.com/watch?v=iWS9ogMPOI0)
 ##### SQLAlchemy ORM
-- Links [SQLAlchemy](https://docs.sqlalchemy.org/en/13/orm/extensions/declarative/basic_use.html)
+- Links:
+    - [SQLAlchemy](https://docs.sqlalchemy.org/en/13/orm/extensions/declarative/basic_use.html)
