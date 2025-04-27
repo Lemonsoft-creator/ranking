@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Cockpit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+</head>
+<body class="admin_body">
+
+  <h1 class="admin_h1">⚙️ Admin Cockpit</h1>
+
+  <div class="admin_buttons">
+    <a href="kunde_registrieren.html">📝 Registrieren</a>
+    <a href="messung_eintragen.html">📊 Messung</a>
+    <a href="rangliste.html">🏆 Rangliste</a>
+    <a href="/export_csv">📁 Kunden exportieren</a>
+    <a href="/export_messung">📁 Messungen exportieren</a>
+  </div>
+
+  <div class="admin_card">
+    <h2>📈 Statistiken</h2>
+    <p>👥 Anzahl Kunden: <strong id="anzahl">...</strong></p>
+    <p>👨 Männer: <strong id="maenner">...</strong></p>
+    <p>👩 Frauen: <strong id="frauen">...</strong></p>
+    <p>💪 Höchste Schlagkraft Männer: <strong id="max_mann">...</strong> kg</p>
+    <p>💪 Höchste Schlagkraft Frauen: <strong id="max_frau">...</strong> kg</p>
+  </div>
+
+  <div class="admin_card">
+    <h2>👥 Kundenliste</h2>
+    <ul class="list-group" id="kundenliste"></ul>
+  </div>
+
+  <script>
+    fetch('/admin_daten')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('anzahl').textContent = data.anzahl;
+        document.getElementById('maenner').textContent = data.maenner;
+        document.getElementById('frauen').textContent = data.frauen;
+        document.getElementById('max_mann').textContent = data.max_mann;
+        document.getElementById('max_frau').textContent = data.max_frau;
+
+        const liste = document.getElementById('kundenliste');
+        data.kunden.forEach(k => {
+          const li = document.createElement('li');
+          li.className = 'list-group-item';
+          li.innerHTML = `<span>${k.pseudonym} (${k.vorname} ${k.name}) - ${k.geschlecht}</span>
+                          <a href="/admin_loeschen?id=${k.id}" class="btn-del">🗑️</a>`;
+          liste.appendChild(li);
+        });
+      });
+  </script>
+</body>
+</html>
