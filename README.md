@@ -35,12 +35,15 @@ source venv/bin/activate
 Danach ist die virtuelle Umgebung aktiviert. Im terminal ist am linken rand die (venv) zu sehen, was eine erfolgreiche Aktivierung bedeutet:
 
 ````bash
-# for mac
+# local terminal prompt
 (venv) bitwielder >
 ````
+Sobald die virtuelle Umgebung aktiv ist, kann mit Hilfe des `requirements.txt` und `pip` alle APIs installiert werden:
 
-
-
+````bash
+# local terminal prompt
+pip3 install -r requirements.txt
+````
 
 
 
