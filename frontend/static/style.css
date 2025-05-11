@@ -1,3 +1,4 @@
+/*----------- Admin Style ----------- */
 .admin_body {
     font-family: 'Inter', sans-serif;
     background-color: #f4f6f9;
@@ -142,5 +143,141 @@
 
     .custom_reg_button {
       font-size: 0.95rem;
+    }
+  }
+
+  /*----------- Messung Style ----------- */
+
+  .messung_body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f3f4f6;
+    margin: 0;
+    padding: 1rem;
+  }
+
+  .messung_container {
+    max-width: 500px;
+    margin: auto;
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .messung_h1 {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .messung_label {
+    font-weight: bold;
+    display: block;
+    margin-top: 1rem;
+  }
+
+  .messung_input, .messung_select {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-top: 0.25rem;
+    font-size: 1rem;
+  }
+
+  .messung_button {
+    width: 100%;
+    margin-top: 2rem;
+    padding: 1rem;
+    font-size: 1rem;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  .messung_button:hover {
+    background-color: #2563eb;
+  }
+
+  @media (max-width: 600px) {
+    .container {
+      padding: 1rem;
+    }
+  }
+
+    /*----------- Rangliste Style ----------- */
+
+  .rangliste_body {
+    font-family: 'Inter', sans-serif;
+    background: #f9fafb;
+    margin: 0;
+    padding: 1rem;
+  }
+
+  .ranglist h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+  }
+
+  .rangliste_abschnitt {
+    margin-top: 2rem;
+  }
+
+  .rangliste_abschnitt_h2 {
+    font-size: 1.3rem;
+    border-bottom: 2px solid #3b82f6;
+    margin-bottom: 1rem;
+    padding-bottom: 0.3rem;
+  }
+
+  .rangliste_gruppe {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  .rangliste_gruppe h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    color: #111827;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 0.5rem;
+  }
+
+  .rangliste_table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  .rangliste_th, .rangliste_td {
+    text-align: left;
+    padding: 0.5rem;
+  }
+
+  .rangliste_tr:nth-child(even) {
+    background: #f3f4f6;
+  }
+
+  .rangliste_medaille {
+    font-weight: bold;
+  }
+
+  .🥇 { color: gold; }
+  .🥈 { color: silver; }
+  .🥉 { color: #cd7f32; }
+
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 1.5rem;
+    }
+    .gruppe h3 {
+      font-size: 1rem;
     }
   }
