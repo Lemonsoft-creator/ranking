@@ -14,3 +14,14 @@ git config --global http.postBuffer 157286400
 
 ## Worked
 - 3 Stunden.
+
+# 11.05.2025
+
+## Done
+- HTML von CSS getrennt.
+- Rangliste angefangen principle separation of concerns zusetzen. JS code aud HTML Seite raus und JS Methoden erstellt.
+- main.py angefangen selber nachzubauen um einen sauberen und verständlichen code zu erstellen.
+- ersten lokalen fastapi run.
+
+## Worked
+-3 Stunden.

@@ -6,6 +6,7 @@
   <title>PowerKube Rangliste</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="../static/style.css">
+  <script src="../scripte/rangliste.js" defer></script>
 </head>
 <body class="rangliste_body">
   <h1 class="rangliste">🏆 PowerKube Rangliste</h1>
@@ -17,52 +18,6 @@
   <div class="ranglist_abschnitt" id="weiblich">
     <h2 class="rangliste_abschnitt_h2">👩 Frauen</h2>
   </div>
-
-  <script>
-    fetch("/rangliste_daten")
-      .then(response => response.json())
-      .then(data => {
-        const sortierteKeys = Object.keys(data).sort((a, b) => {
-          const [geschlechtA, klasseA] = a.split(" - ");
-          const [geschlechtB, klasseB] = b.split(" - ");
-
-          const val = klasse => {
-            const num = parseFloat(klasse.replace("+", "").replace("-", "").replace("kg", ""));
-            return klasse.includes("+") ? num + 1000 : num;
-          };
-
-          if (geschlechtA !== geschlechtB) {
-            return geschlechtA === "Maennlich" ? -1 : 1;
-          }
-
-          return val(klasseB) - val(klasseA);
-        });
-
-        sortierteKeys.forEach(key => {
-          const [geschlecht, klasse] = key.split(" - ");
-          const teilnehmer = data[key];
-
-          const block = document.createElement("div");
-          block.className = "gruppe";
-          block.innerHTML = `<h3>${klasse}</h3>
-            <table>
-              <thead><tr><th>Platz</th><th>Pseudonym</th><th>💪 Schlagkraft (kg)</th></tr></thead>
-              <tbody>
-                ${teilnehmer.map((t, i) => {
-                  const platz = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : i + 1;
-                  return `<tr>
-                    <td class="medaille ${platz}">${platz}</td>
-                    <td>${t.pseudonym}</td>
-                    <td>${t.max_schlagkraft.toFixed(1)}</td>
-                  </tr>`;
-                }).join("")}
-              </tbody>
-            </table>`;
-
-          document.getElementById(geschlecht.toLowerCase()).appendChild(block);
-        });
-      });
-  </script>
 </body>
 </html>
 

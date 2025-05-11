@@ -48,11 +48,20 @@ pip3 install -r requirements.txt
 ````
 
 
-
-
 __SQLAlchemy ORM__
 - Links:
     - [SQLAlchemy](https://docs.sqlalchemy.org/en/13/orm/extensions/declarative/basic_use.html)
 
 Beschreibung:
 - SQLAlchemy wird als ORM Mapper verwendet.
+
+### JAVA Script
+#### fetch API
+Mit der `fetch` API können HTTP Requests über das Netzwerk verschickt und eine Response empfangen werden. Für den Request in [Rangliste](/frontend/scripte/rangliste.js):
+````JavaScript
+const data = await fetchRankingData("/rangliste_daten");
+````
+wird eine HTTP-GET-Anfrage an den Server-Endpunkt `/rangliste_daten` gesendet. Der Server sollte als Antwort JSON-Daten zurückgeben. Dabei wird ein relativer URL verwendet, die sich auf den aktuellen Speicherort der HTML-Datei bezieht.Das heisst relativ zur Basis-URL der aktuellen Seite. Beispiel:
+
+> Wenn sich die Seite beispielsweise unter https://example.com/rangliste.html befindet, wird die Anfrage an https://example.com/rangliste_daten gesendet.
+
