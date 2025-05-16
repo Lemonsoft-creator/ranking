@@ -47,6 +47,13 @@ Sobald die virtuelle Umgebung aktiv ist, kann mit Hilfe des `requirements.txt` u
 pip3 install -r requirements.txt
 ````
 
+Das `venv/`Verzeichnis ist ein lokales Set-Up. Dieses Set-Up sollte nicht mit ins git eingecheckt werden. Das Verzeichnis im `.gitignore` hinterlegen. Im `equirements.txt` werden alle Verwendeten APIs dokumentiert. Mit:
+
+````bash
+pip freeze > requirements.txt
+````
+wird das `requirements.txt` geupdatete mit der dazugehörigen Version der verwendeten APIs.
+
 
 __SQLAlchemy ORM__
 - Links:
