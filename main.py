@@ -2,17 +2,34 @@ from fastapi import FastAPI, Form, Request
 from fastapi.responses import StreamingResponse
 from fastapi.responses import FileResponse, RedirectResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, create_engine, desc, func
-from sqlalchemy.orm import sessionmaker, declarative_base, relationship, joinedload
 import os
 from datetime import datetime
 import csv
 from io import StringIO
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, create_engine, desc, func
+from sqlalchemy.orm import sessionmaker, declarative_base, relationship, joinedload
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.pool import StaticPool
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine
 
+"""
 DATABASE_URL = os.getenv("DATABASE_URL")
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
+"""
+DATABASE_URL = "sqlite:///:memory:"
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool
+)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+#Base.metadata.create_all(bind=engine)
+
 
 class Kunde(Base):
     __tablename__ = "kunden"
@@ -39,6 +56,7 @@ class Messung(Base):
     kunde = relationship("Kunde", back_populates="messungen")
 
 Base.metadata.create_all(bind=engine)
+
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -120,7 +138,7 @@ def rangliste_daten():
         grenzen = gewichtsklassen.get(geschlecht, [])
         for g in sorted(grenzen):
             if gewicht <= g:
-                return f"-{g}kg"
+                return f"{g}kg"
         return f"+{grenzen[0]}kg"
 
     rang_ungeordnet = {}
@@ -248,3 +266,6 @@ def admin_loeschen(id: int):
     db.close()
     return RedirectResponse(url="/admin", status_code=302)
 
+
+
+Base.metadata.create_all(bind=engine)

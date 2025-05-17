@@ -6,14 +6,32 @@
 ## Technische Dokumentation
 Dieses Kapitel soll einen Überblick darüber geben, mit welchen APIs und Technologien das Projekt Rangliste umgesetzt worden ist.
 
-### Python
 
-#### FastAPI
+### FastAPI
 __Links:__
 
 - [Build a REST API](https://www.youtube.com/watch?v=iWS9ogMPOI0)
 
-__Doc:__
+Damit FastAPI weiss wo es die HTML-Files findet, wird dem FasAPI-Objekt der Pfad übergeben:
+
+````Python
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+````
+Sobald, zum Beispiel auf der lokalen Umgebung, der Endpoint:
+
+````Python
+@app.get("/admin")
+def admin():
+    return FileResponse(os.path.join("static", "admin.html"))
+````
+mit:
+
+````Python
+http://127.0.0.1:8000/admin
+````
+aufgerufen wird, weiss FastAPI wo es die HTML-Seiten findet, unter `/static/...`
+
 
 - JS ruft das Backend FastAPI auf und FastAPI gibt eine Response(Result) zurück(hier nach Möglichkeit noch ein Bild zur illustration ergänzen.)
 
@@ -61,6 +79,23 @@ __SQLAlchemy ORM__
 
 Beschreibung:
 - SQLAlchemy wird als ORM Mapper verwendet.
+
+Hier zu müssen alle Entity Klassen von `Base`erben. In SQLAlchemy dient `declarative_base()` dazu, eine Basisklasse zu erzeugen, von der alle ORM-Modelle erben sollen. Diese Basisklasse enthält Metadaten über die Modelle, z. B. deren Tabellennamen, Spalten und Beziehungen.
+
+````Python
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
+````
+Ab dann erstellt man eigene Modelle so:
+
+````Python
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+````
+Alle Modellklassen, die von derselben Base-Instanz erben, werden zentral registriert. Diese Registrierung ist notwendig, damit SQLAlchemy weiß, welche Tabellen es anlegen oder verwalten soll.
 
 ### JAVA Script
 #### fetch API
