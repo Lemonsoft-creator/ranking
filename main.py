@@ -125,6 +125,30 @@ def kunden_json():
     db.close()
     return [{"id": k.id, "vorname": k.vorname, "name": k.name, "plz_ort": k.plz_ort} for k in kunden]
 
+@app.get("/vergleich_daten")
+def vergleich_daten():
+    db = SessionLocal()
+    messungen = db.query(Messung).options(joinedload(Messung.kunde)).all()
+    db.close()
+
+    tyson_max = 100.0  # kg – als 100 % Referenzwert
+
+    daten = []
+    for messung in messungen:
+        kunde = messung.kunde
+        if not kunde or not messung.max_schlagkraft:
+            continue
+
+        daten.append({
+            "pseudonym": kunde.pseudonym,
+            "prozent_von_tyson": round((messung.max_schlagkraft / tyson_max) * 100, 1)
+        })
+
+    # Optional: nach Schlagkraft sortieren
+    daten.sort(key=lambda x: x["prozent_von_tyson"], reverse=True)
+
+    return daten
+
 @app.get("/rangliste_daten")
 def rangliste_daten():
     db = SessionLocal()
@@ -180,7 +204,6 @@ def rangliste_daten():
         )
 
     return dict(sorted(rang_ungeordnet.items(), key=sort_key))
-
 
 @app.get("/admin")
 def admin():
