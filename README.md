@@ -107,3 +107,54 @@ wird eine HTTP-GET-Anfrage an den Server-Endpunkt `/rangliste_daten` gesendet. D
 
 > Wenn sich die Seite beispielsweise unter https://example.com/rangliste.html befindet, wird die Anfrage an https://example.com/rangliste_daten gesendet.
 
+## Umrechnung von Joule in Kilogramm-Kraft (kgf)
+
+### Was ist Joule (J)?
+
+Joule ist die SI-Einheit der Energie. Sie beschreibt die Arbeit, die verrichtet wird, wenn ein Körper mit einer Kraft von $1 Newton (N)$ über eine Strecke von $1 Meter (m)$ bewegt wird:
+
+````Math
+1Joule=1Newton×1Meter
+````
+In unserem Fall beschreibt Joule die kinetische Energie, die beim Aufprall eines Schlages das Schlagkissen übertragen wird.
+
+### Was ist Kilogramm-Kraft (kgf)?
+
+Kilogramm-Kraft (kgf) ist eine veraltete, aber anschauliche Einheit für Kraft. Sie beschreibt die Kraft, die durch das Gewicht einer Masse von $1$ Kilogramm im Erdschwerefeld erzeugt wird. Formal:
+
+````Math
+1kgf=9,80665Newton
+````
+Da Sportler sich unter Kilogramm-Gewicht etwas vorstellen können (z. B. wie viel sie stemmen oder tragen), wird diese Einheit oft verwendet, um Schlagstärken vergleichbar zu machen.
+
+### Warum kann man Joule nicht direkt in Kilogramm-Kraft (kgf) umrechnen?
+
+Joule misst Energie, kgf misst Kraft – es handelt sich also um unterschiedliche physikalische Größen:
+
+````Math
+Energie: [E]=kg⋅m^2/s^2
+````
+````Math
+Kraft: [F]=kg⋅m/s^2
+````
+Um von Energie (Joule) auf Kraft (kgf) schließen zu können, muss man eine Annahme über die Wegstrecke $ss$ treffen, über die die Kraft beim Schlag gewirkt hat. Nur dann kann man über die Formel:
+
+````Math
+E=F⋅s⇒F=sE​
+````
+
+die mittlere Kraft berechnen. Die Umrechnung in kgf erfolgt anschließend über:
+
+````Math
+F_{kgf}​=s⋅gE​
+````
+
+mit $g≈9,81 m/s2g≈9,81m/s^2$ (Erdbeschleunigung).
+
+### Schätzgröße: Wegstrecke ss
+
+In der Praxis kennt man den exakten Weg $ss$ nicht, über den der Schlag seine Energie auf das Schlagkissen überträgt. Daher wird eine realistische Schätzgröße angenommen. Für Faustschläge auf ein Schlagkissen hat sich ein Wert von
+```Math
+s≈0,3 m
+````
+(30 cm Eindrückweg) als praktikabel erwiesen.

@@ -61,6 +61,12 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# Berechnet die Schlagkraft in kgf (Kilogramm-Kraft) aus der Energie (Joule).
+def joule_to_kgf(joule: float, weg_in_m: float = 0.3) -> float:
+    kraft_n = (2 * joule) / weg_in_m
+    kgf = kraft_n / 9.81
+    return round(kgf, 1)
+
 @app.get("/")
 def root():
     return FileResponse(os.path.join("static", "rangliste.html"))
@@ -104,14 +110,18 @@ async def registriere_kunde(
 @app.post("/messung")
 async def messung_eintragen(
     kunde_id: int = Form(...),
-    max_schlagkraft: float = Form(...),
-    avg_schlagkraft: float = Form(...)
+    max_joule: float = Form(...),
+    avg_joule: float = Form(...)
 ):
-    db = SessionLocal()
+   
+    max_schlagkraft_kgf = joule_to_kgf(max_joule)
+    avg_schlagkraft_kgf = joule_to_kgf(avg_joule)
+
+    db: Session = SessionLocal()
     messung = Messung(
         kunde_id=kunde_id,
-        max_schlagkraft=max_schlagkraft,
-        avg_schlagkraft=avg_schlagkraft
+        max_schlagkraft=max_schlagkraft_kgf,
+        avg_schlagkraft=avg_schlagkraft_kgf
     )
     db.add(messung)
     db.commit()

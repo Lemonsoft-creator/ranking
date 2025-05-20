@@ -1,3 +1,4 @@
+<!-- templates/messung_form.html -->
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -12,7 +13,6 @@
       margin: 0;
       padding: 1rem;
     }
-
     .container {
       max-width: 500px;
       margin: auto;
@@ -21,19 +21,16 @@
       padding: 2rem;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
-
     h1 {
       font-size: 1.5rem;
       text-align: center;
       margin-bottom: 2rem;
     }
-
     label {
       font-weight: bold;
       display: block;
       margin-top: 1rem;
     }
-
     input, select {
       width: 100%;
       padding: 0.75rem;
@@ -42,7 +39,6 @@
       margin-top: 0.25rem;
       font-size: 1rem;
     }
-
     button {
       width: 100%;
       margin-top: 2rem;
@@ -55,15 +51,8 @@
       font-weight: bold;
       cursor: pointer;
     }
-
     button:hover {
       background-color: #2563eb;
-    }
-
-    @media (max-width: 600px) {
-      .container {
-        padding: 1rem;
-      }
     }
   </style>
 </head>
@@ -76,18 +65,21 @@
         <option value="">Kunde auswählen...</option>
       </select>
 
-      <label for="max_schlagkraft">Max. Schlagkraft (kg)</label>
-      <input type="number" name="max_schlagkraft" step="0.1" placeholder="z. B. 520.5" required>
+      <label for="max_joule">Max. Schlagenergie (Joule)</label>
+      <input type="number" name="max_joule" step="0.1" placeholder="z. B. 300.0" required>
 
-      <label for="avg_schlagkraft">Durchschnittliche Schlagkraft (kg)</label>
-      <input type="number" name="avg_schlagkraft" step="0.1" placeholder="z. B. 480.3" required>
+      <label for="avg_joule">Durchschnittliche Schlagenergie (Joule)</label>
+      <input type="number" name="avg_joule" step="0.1" placeholder="z. B. 250.0" required>
+
+      <p style="font-size: 0.9rem; color: #555; margin-top: 1rem;">
+        Hinweis: Die Eingabe erfolgt in Joule. Die Schlagkraft in Kilogramm-Kraft (kgf) wird automatisch berechnet und gespeichert.
+      </p>
 
       <button type="submit">💾 Messung speichern</button>
     </form>
   </div>
 
   <script>
-    // Lade Kundenliste in Dropdown
     fetch("/kunden_json")
       .then(response => response.json())
       .then(kunden => {
