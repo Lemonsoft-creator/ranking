@@ -85,11 +85,11 @@
     }
 
     .tyson-bar {
-      background-color: #f75b8f; /* Grau */
+      background-color: #f75b8f; 
     }
 
     .user-bar {
-      background-color: #3b82f6; /* Blau */
+      background-color: #3b82f6; 
       width: 0;
     }
 
@@ -153,14 +153,15 @@
               <tbody>
                 ${teilnehmer.map((t, i) => {
                   const platz = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : i + 1;
-                  const prozent = Math.min(100, (t.max_schlagkraft / 450) * 100).toFixed(1);
-                  const barWidth = Math.min(100, (t.max_schlagkraft / 450) * 100);
-                  const barId = `bar-${geschlecht}-${klasse}-${i}`.replace(/\s+/g, "-");
+                  const prozent = Math.min(100, (t.max_kgf / 450) * 100).toFixed(1);
+                  const barWidth = Math.min(100, (t.max_kgf / 450) * 100);
+                  const sanitize = str => str.replace(/[^a-zA-Z0-9]/g, "-");
+                  const barId = `bar-${sanitize(geschlecht)}-${sanitize(klasse)}-${i}`;
 
                   return `<tr>
                     <td class="medaille ${platz}">${platz}</td>
                     <td>${t.pseudonym}</td>
-                    <td>${t.max_schlagkraft.toFixed(1)}</td>
+                    <td>${t.max_kgf.toFixed(1)}</td>
                     <td>
                       <div class="bar-container">
                         <div class="bar tyson-bar" style="width: 100%;"></div> 
@@ -179,8 +180,10 @@
 
           // Nach dem Anhängen animieren
           teilnehmer.forEach((t, i) => {
-            const barId = `bar-${geschlecht}-${klasse}-${i}`.replace(/\s+/g, "-");
-            const barWidth = Math.min(100, (t.max_schlagkraft / 450) * 100);
+            const sanitize = str => str.replace(/[^a-zA-Z0-9]/g, "-");
+            const barId = `bar-${sanitize(geschlecht)}-${sanitize(klasse)}-${i}`;
+
+            const barWidth = Math.min(100, (t.max_kgf / 450) * 100);
             const el = document.getElementById(barId);
             if (el) {
               setTimeout(() => {

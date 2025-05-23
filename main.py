@@ -12,6 +12,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.pool import StaticPool
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
+from datetime import datetime
+from sqlalchemy import DateTime
+
 
 """
 DATABASE_URL = os.getenv("DATABASE_URL")
@@ -50,10 +53,13 @@ class Messung(Base):
     __tablename__ = "messungen"
     id = Column(Integer, primary_key=True, index=True)
     kunde_id = Column(Integer, ForeignKey("kunden.id"))
-    max_schlagkraft = Column(Float)
-    avg_schlagkraft = Column(Float)
-    datum = Column(String, default=str(datetime.now()))
+    max_joule = Column(Float)
+    avg_joule = Column(Float)
+    max_kgf = Column(Float)
+    avg_kgf = Column(Float)
+    datum = Column(DateTime, default=datetime.now)
     kunde = relationship("Kunde", back_populates="messungen")
+
 
 Base.metadata.create_all(bind=engine)
 
@@ -110,23 +116,28 @@ async def registriere_kunde(
 @app.post("/messung")
 async def messung_eintragen(
     kunde_id: int = Form(...),
-    max_joule: float = Form(...),
-    avg_joule: float = Form(...)
+    schlag_1: float = Form(...),
+    schlag_2: float = Form(...),
+    schlag_3: float = Form(...)
 ):
-   
-    max_schlagkraft_kgf = joule_to_kgf(max_joule)
-    avg_schlagkraft_kgf = joule_to_kgf(avg_joule)
+    avg_joule = round((schlag_1 + schlag_2 + schlag_3) / 3, 1)
+    max_joule = round(max(schlag_1, schlag_2, schlag_3), 1)
+
+    avg_kgf = joule_to_kgf(avg_joule)
+    max_kgf = joule_to_kgf(max_joule)
 
     db: Session = SessionLocal()
     messung = Messung(
         kunde_id=kunde_id,
-        max_schlagkraft=max_schlagkraft_kgf,
-        avg_schlagkraft=avg_schlagkraft_kgf
+        avg_joule=avg_joule,
+        max_joule=max_joule,
+        avg_kgf=avg_kgf,
+        max_kgf=max_kgf
     )
     db.add(messung)
     db.commit()
     db.close()
-    return RedirectResponse(url="/", status_code=302)
+    return RedirectResponse("/messung", status_code=303)
 
 @app.get("/kunden_json")
 def kunden_json():
@@ -146,12 +157,12 @@ def vergleich_daten():
     daten = []
     for messung in messungen:
         kunde = messung.kunde
-        if not kunde or not messung.max_schlagkraft:
+        if not kunde or not messung.max_kgf:
             continue
 
         daten.append({
             "pseudonym": kunde.pseudonym,
-            "prozent_von_tyson": round((messung.max_schlagkraft / tyson_max) * 100, 1)
+            "prozent_von_tyson": round((messung.max_kgf / tyson_max) * 100, 1)
         })
 
     # Optional: nach Schlagkraft sortieren
@@ -191,13 +202,13 @@ def rangliste_daten():
 
         rang_ungeordnet[key].append({
             "pseudonym": kunde.pseudonym,
-            "max_schlagkraft": messung.max_schlagkraft
+            "max_kgf": messung.max_kgf
         })
 
     db.close()
 
     for teilnehmer in rang_ungeordnet.values():
-        teilnehmer.sort(key=lambda x: x["max_schlagkraft"], reverse=True)
+        teilnehmer.sort(key=lambda x: x["max_kgf"], reverse=True)
 
     # Sortierreihenfolge definieren
     def sort_key(k):
@@ -225,8 +236,8 @@ def admin_daten():
     anzahl = db.query(Kunde).count()
     maenner = db.query(Kunde).filter(Kunde.geschlecht.ilike("maennlich")).count()
     frauen = db.query(Kunde).filter(Kunde.geschlecht.ilike("weiblich")).count()
-    max_mann = db.query(func.max(Messung.max_schlagkraft)).join(Kunde).filter(Kunde.geschlecht.ilike("maennlich")).scalar() or 0
-    max_frau = db.query(func.max(Messung.max_schlagkraft)).join(Kunde).filter(Kunde.geschlecht.ilike("weiblich")).scalar() or 0
+    max_mann = db.query(func.max(Messung.max_kgf)).join(Kunde).filter(Kunde.geschlecht.ilike("maennlich")).scalar() or 0
+    max_frau = db.query(func.max(Messung.max_kgf)).join(Kunde).filter(Kunde.geschlecht.ilike("weiblich")).scalar() or 0
     kunden = db.query(Kunde).all()
     db.close()
     return {
@@ -281,7 +292,7 @@ def export_messung():
             if messung.kunde_id == kunde.id:
                 writer.writerow([
                     kunde.id, kunde.pseudonym, kunde.vorname, kunde.name, kunde.geschlecht,
-                    messung.max_schlagkraft, messung.avg_schlagkraft, messung.datum
+                    messung.max_kgf, messung.avg_schlagkraft, messung.datum
                 ])
 
     output.seek(0)

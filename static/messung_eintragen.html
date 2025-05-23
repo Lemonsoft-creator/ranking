@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Messung eintragen</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/footer.css">
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -54,6 +55,86 @@
     button:hover {
       background-color: #2563eb;
     }
+    /* footer.css */
+.footer {
+  background-color: #e9d8eb;
+  color: #222;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 0.5rem 0.8rem;
+  width: 100%;
+  box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.05);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.footer-left {
+  text-align: center;
+}
+
+.footer-logo {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #000000;
+}
+
+.footer-tagline {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.footer-right {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.footer-right a {
+  color: #555;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.2s ease-in-out;
+}
+
+.footer-right a:hover {
+  color: #0077cc;
+}
+
+.footer-bottom {
+  border-top: 1px solid #ddd;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #999;
+}
+
+@media (min-width: 640px) {
+  .footer-container {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-left {
+    text-align: left;
+  }
+
+  .footer-right {
+    justify-content: flex-end;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -65,19 +146,38 @@
         <option value="">Kunde auswählen...</option>
       </select>
 
-      <label for="max_joule">Max. Schlagenergie (Joule)</label>
-      <input type="number" name="max_joule" step="0.1" placeholder="z. B. 300.0" required>
-
-      <label for="avg_joule">Durchschnittliche Schlagenergie (Joule)</label>
-      <input type="number" name="avg_joule" step="0.1" placeholder="z. B. 250.0" required>
+      <label>Schlagenergie (Joule)</label>
+      <input type="number" name="schlag_1" step="0.1" placeholder="1. Schlag (z. B. 300.0)" required>
+      <input type="number" name="schlag_2" step="0.1" placeholder="2. Schlag (z. B. 280.0)" required>
+      <input type="number" name="schlag_3" step="0.1" placeholder="3. Schlag (z. B. 290.0)" required>
 
       <p style="font-size: 0.9rem; color: #555; margin-top: 1rem;">
-        Hinweis: Die Eingabe erfolgt in Joule. Die Schlagkraft in Kilogramm-Kraft (kgf) wird automatisch berechnet und gespeichert.
+        Hinweis: Die Eingabe erfolgt in Joule. Der Durchschnitt und die Schlagkraft in Kilogramm-Kraft (kgf) werden automatisch berechnet und gespeichert.
       </p>
 
       <button type="submit">💾 Messung speichern</button>
     </form>
+    
   </div>
+
+  <!-- footer.html -->
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-left">
+      <h2 class="footer-logo">AllInSport</h2>
+      <p class="footer-tagline">Train smart. Strike hard.</p>
+    </div>
+    <div class="footer-right">
+      <a href="/about">Über uns</a>
+      <a href="/kontakt">Kontakt</a>
+      <a href="/impressum">Impressum</a>
+      <a href="/datenschutz">Datenschutz</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 AllInSport Created by Paul Salomon. All rights reserved.</p>
+  </div>
+</footer>
 
   <script>
     fetch("/kunden_json")
@@ -92,5 +192,6 @@
         });
       });
   </script>
+  
 </body>
 </html>
