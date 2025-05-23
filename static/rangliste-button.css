@@ -1,0 +1,34 @@
+.zur_rangliste-button {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.zur_rangliste-button:hover {
+  background-color: #f0f0f0;
+  transform: scale(1.05);
+}
+
+.zur_rangliste-logo {
+  width: 60%;
+  height: 60%;
+  object-fit: contain;
+}
+@media (max-width: 600px) {
+  .zur_rangliste-button {
+    top: 0.5rem;
+    left: 0.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
