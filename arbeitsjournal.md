@@ -83,4 +83,15 @@ Im Endpoint `@app.post("/messung")` werden dann einmal die mittlere und maximale
 
 
 ## Worked
--$2$ Stunden.
+- 2 Stunden
+
+# 25.05.2025
+
+## Done
+
+- Neues Script erstellt um Fake Kunden zu erstellen um lokal die App testen zu können.
+- Admin Button hinzugefügt.
+- Footer in Rangliste angepasst.
+
+## Worked
+- 3 Stund
