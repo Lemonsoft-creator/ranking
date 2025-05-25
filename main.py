@@ -60,7 +60,6 @@ class Messung(Base):
     datum = Column(DateTime, default=datetime.now)
     kunde = relationship("Kunde", back_populates="messungen")
 
-
 Base.metadata.create_all(bind=engine)
 
 
@@ -292,7 +291,7 @@ def export_messung():
             if messung.kunde_id == kunde.id:
                 writer.writerow([
                     kunde.id, kunde.pseudonym, kunde.vorname, kunde.name, kunde.geschlecht,
-                    messung.max_kgf, messung.avg_schlagkraft, messung.datum
+                    messung.max_kgf, messung.avg_kgf, messung.datum
                 ])
 
     output.seek(0)

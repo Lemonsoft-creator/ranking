@@ -39,7 +39,7 @@ aufgerufen wird, weiss FastAPI wo es die HTML-Seiten findet, unter `/static/...`
 - venv environment anlegen im Backend-Folder für eine isolierte Python Umgebung, [venv — Creation of virtual environments](https://docs.python.org/3/library/venv.html).
 
 ````bash
-cd backend
+cd ranking
 ````
 anschliessend die virtuelle Umgebung einrichten:
 
