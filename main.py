@@ -16,11 +16,12 @@ from datetime import datetime
 from sqlalchemy import DateTime
 
 
-"""
+
 DATABASE_URL = os.getenv("DATABASE_URL")
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
+
 """
 DATABASE_URL = "sqlite:///:memory:"
 engine = create_engine(
@@ -28,7 +29,7 @@ engine = create_engine(
     connect_args={"check_same_thread": False},
     poolclass=StaticPool
 )
-
+"""
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 #Base.metadata.create_all(bind=engine)
@@ -151,7 +152,7 @@ def vergleich_daten():
     messungen = db.query(Messung).options(joinedload(Messung.kunde)).all()
     db.close()
 
-    tyson_max = 100.0  # kg – als 100 % Referenzwert
+    tyson_max = 453  # kg – als 100 % Referenzwert
 
     daten = []
     for messung in messungen:
