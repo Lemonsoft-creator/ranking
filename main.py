@@ -16,7 +16,7 @@ from datetime import datetime
 
 
 
-
+"""
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL is not set")
@@ -32,7 +32,7 @@ engine = create_engine(
     connect_args={"check_same_thread": False},
     poolclass=StaticPool
 )
-"""
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 Base.metadata.create_all(bind=engine)
@@ -156,30 +156,49 @@ def vergleich_daten():
     messungen = db.query(Messung).options(joinedload(Messung.kunde)).all()
     db.close()
 
-    tyson_max = 453  # kg – Mike Tyson
-    halmich_max = 240  # kg – Regina Halmich
+    # Referenzwerte
+    tyson_max_kgf = 453
+    tyson_gewicht = 113
+
+    halmich_max_kgf = 240
+    halmich_gewicht = 50
 
     daten = []
+
     for messung in messungen:
         kunde = messung.kunde
-        if not kunde or not messung.max_kgf:
+        if not kunde or not messung.max_kgf or not kunde.gewicht:
             continue
 
         geschlecht = kunde.geschlecht.strip().lower()
-        referenz = tyson_max if geschlecht == "maennlich" else halmich_max
-        referenz_name = "Mike Tyson" if geschlecht == "maennlich" else "Regina Halmich"
+
+        if geschlecht == "maennlich":
+            ref_max = tyson_max_kgf
+            ref_gewicht = tyson_gewicht
+            ref_name = "Mike Tyson"
+        else:
+            ref_max = halmich_max_kgf
+            ref_gewicht = halmich_gewicht
+            ref_name = "Regina Halmich"
+
+        # Gewichtskorrigierte Schlagkraft
+        gewicht_koeff = ref_gewicht / kunde.gewicht
+        korrigierte_schlagkraft = messung.max_kgf * gewicht_koeff
+
+        prozent = round((korrigierte_schlagkraft / ref_max) * 100, 1)
 
         daten.append({
             "pseudonym": kunde.pseudonym,
-            "prozent_von_referenz": round((messung.max_kgf / referenz) * 100, 1),
-            "referenz": referenz_name
+            "prozent_von_referenz": prozent,
+            "referenz": ref_name,
+            "gewicht": kunde.gewicht,
+            "max_kgf": messung.max_kgf,
+            "gewicht_koeffizient": round(gewicht_koeff, 4),
+            "korrigierte_schlagkraft": round(korrigierte_schlagkraft, 2)
         })
 
-    # Sortierung optional
     daten.sort(key=lambda x: x["prozent_von_referenz"], reverse=True)
-
     return daten
-
 
 @app.get("/rangliste_daten")
 def rangliste_daten():
@@ -339,7 +358,3 @@ def admin_loeschen(id: int):
         db.commit()
     db.close()
     return RedirectResponse(url="/admin", status_code=302)
-
-
-
-Base.metadata.create_all(bind=engine)

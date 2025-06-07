@@ -102,80 +102,79 @@
         font-size: 1rem;
       }
     }
-       /* footer.css */
-.footer {
-  background-color: #000000;
-  color: #222;
-  font-family: 'Signika', sans-serif;
-  padding: 0.3rem 0.6rem;
-  width: 100%;
-  box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.05);
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 40px;
-  z-index: 10;
-}
 
-.footer-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.2rem;
-  text-align: center;
-}
+    .footer {
+      background-color: #000000;
+      color: #222;
+      font-family: 'Signika', sans-serif;
+      padding: 0.3rem 0.6rem;
+      width: 100%;
+      box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.05);
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 40px;
+      z-index: 10;
+    }
 
-.footer-logo {
-  margin: 0;
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: #ffffff;
-  line-height: 1.2;
-}
+    .footer-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.2rem;
+      text-align: center;
+    }
 
-.footer-tagline {
-  font-size: 0.75rem;
-  color: #ffffff;
-  margin: 0;
-  line-height: 1.2;
-}
+    .footer-logo {
+      margin: 0;
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #ffffff;
+      line-height: 1.2;
+    }
 
-.footer-right {
-  display: none; 
-}
+    .footer-tagline {
+      font-size: 0.75rem;
+      color: #ffffff;
+      margin: 0;
+      line-height: 1.2;
+    }
 
-.footer-bottom {
-  display: none; 
-}
+    .footer-right {
+      display: none; 
+    }
 
+    .footer-bottom {
+      display: none; 
+    }
 
-@media (min-width: 640px) {
-  .footer-container {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
+    @media (min-width: 640px) {
+      .footer-container {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
 
-  .footer-left {
-    text-align: left;
-  }
+      .footer-left {
+        text-align: left;
+      }
 
-  .footer-right {
-    justify-content: flex-end;
-  }
-}
+      .footer-right {
+        justify-content: flex-end;
+      }
+    }
   </style>
 </head>
 
 <body>
   <a href="/static/admin.html" class="admin-button" aria-label="Zur Startseite">
     <img src="/static/img/allinsport_logo_small.JPG" alt="Logo" class="home-logo" />
-</a>
+  </a>
   <h1>🏆 PowerKube Rangliste</h1>
 
   <div class="abschnitt" id="maennlich">
@@ -187,98 +186,124 @@
   </div>
 
   <script>
-  fetch("/rangliste_daten")
-    .then(response => response.json())
-    .then(data => {
-      const sortierteKeys = Object.keys(data).sort((a, b) => {
-        const [geschlechtA, klasseA] = a.split(" - ");
-        const [geschlechtB, klasseB] = b.split(" - ");
+    // Rangliste abrufen und aufbauen
+    fetch("/rangliste_daten")
+      .then(response => response.json())
+      .then(data => {
+        const sortierteKeys = Object.keys(data).sort((a, b) => {
+          const [geschlechtA, klasseA] = a.split(" - ");
+          const [geschlechtB, klasseB] = b.split(" - ");
 
-        const val = klasse => {
-          const num = parseFloat(klasse.replace("+", "").replace("-", "").replace("kg", ""));
-          return klasse.includes("+") ? num + 1000 : num;
-        };
+          const val = klasse => {
+            const num = parseFloat(klasse.replace("+", "").replace("-", "").replace("kg", ""));
+            return klasse.includes("+") ? num + 1000 : num;
+          };
 
-        if (geschlechtA !== geschlechtB) {
-          return geschlechtA === "Maennlich" ? -1 : 1;
-        }
-
-        return val(klasseB) - val(klasseA);
-      });
-
-      sortierteKeys.forEach(key => {
-        const [geschlecht, klasse] = key.split(" - ");
-        const teilnehmer = data[key];
-
-        const referenz_kgf = geschlecht === "Maennlich" ? 453 : 240;
-        const referenz_name = geschlecht === "Maennlich" ? "Mike Tyson" : "Regina Halmich";
-
-        const block = document.createElement("div");
-        block.className = "gruppe";
-        block.innerHTML = `<h3>${klasse}</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Platz</th>
-                <th>Pseudonym</th>
-                <th>💪 Schlagkraft (Kilogramm-Kraft)</th>
-                <th>🔋 Vergleich zu ${referenz_name} (${referenz_kgf} kgf)</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${teilnehmer.map((t, i) => {
-                const platz = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : i + 1;
-                const prozent = Math.min(100, (t.max_kgf / referenz_kgf) * 100).toFixed(1);
-                const barWidth = Math.min(100, (t.max_kgf / referenz_kgf) * 100);
-                const sanitize = str => str.replace(/[^a-zA-Z0-9]/g, "-");
-                const barId = `bar-${sanitize(geschlecht)}-${sanitize(klasse)}-${i}`;
-
-                return `<tr>
-                  <td class="medaille ${platz}">${platz}</td>
-                  <td>${t.pseudonym}</td>
-                  <td>${t.max_kgf.toFixed(1)}</td>
-                  <td>
-                    <div class="bar-container">
-                      <div class="bar tyson-bar" style="width: 100%;"></div>
-                    </div>
-                    <div class="bar-container">
-                      <div class="bar user-bar" id="${barId}"></div>
-                    </div>
-                    ${prozent}% Schlagkraft von ${referenz_name}
-                  </td>
-                </tr>`;
-              }).join("")}
-            </tbody>
-          </table>`;
-
-        document.getElementById(geschlecht.toLowerCase()).appendChild(block);
-
-        teilnehmer.forEach((t, i) => {
-          const sanitize = str => str.replace(/[^a-zA-Z0-9]/g, "-");
-          const barId = `bar-${sanitize(geschlecht)}-${sanitize(klasse)}-${i}`;
-          const barWidth = Math.min(100, (t.max_kgf / referenz_kgf) * 100);
-          const el = document.getElementById(barId);
-          if (el) {
-            setTimeout(() => {
-              el.style.width = `${barWidth}%`;
-            }, 100);
+          if (geschlechtA !== geschlechtB) {
+            return geschlechtA === "Maennlich" ? -1 : 1;
           }
+
+          return val(klasseB) - val(klasseA);
         });
+
+        sortierteKeys.forEach(key => {
+          const [geschlecht, klasse] = key.split(" - ");
+          const teilnehmer = data[key];
+
+          const referenz_kgf = geschlecht === "Maennlich" ? 453 : 240;
+          const referenz_name = geschlecht === "Maennlich" ? "Mike Tyson" : "Regina Halmich";
+
+          const block = document.createElement("div");
+          block.className = "gruppe";
+          block.innerHTML = `<h3>${klasse}</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Platz</th>
+                  <th>Pseudonym</th>
+                  <th>💪 Schlagkraft (Kilogramm-Kraft)</th>
+                  <th>🔋 Vergleich zu ${referenz_name} (${referenz_kgf} kgf)</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${teilnehmer.map((t, i) => {
+                  const platz = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : i + 1;
+                  const prozent = Math.min(100, (t.max_kgf / referenz_kgf) * 100).toFixed(1);
+                  const barWidth = Math.min(100, (t.max_kgf / referenz_kgf) * 100);
+                  const sanitize = str => str.replace(/[^a-zA-Z0-9]/g, "-");
+                  const barId = `bar-${sanitize(geschlecht)}-${sanitize(klasse)}-${i}`;
+
+                  return `<tr>
+                    <td class="medaille ${platz}">${platz}</td>
+                    <td>${t.pseudonym}</td>
+                    <td>${t.max_kgf.toFixed(1)}</td>
+                    <td>
+                      <div class="bar-container">
+                        <div class="bar tyson-bar" style="width: 100%;"></div>
+                      </div>
+                      <div class="bar-container">
+                        <div class="bar user-bar" id="${barId}"></div>
+                      </div>
+                      ${prozent}% Schlagkraft von ${referenz_name}
+                    </td>
+                  </tr>`;
+                }).join("")}
+              </tbody>
+            </table>`;
+
+          document.getElementById(geschlecht.toLowerCase()).appendChild(block);
+
+          teilnehmer.forEach((t, i) => {
+            const sanitize = str => str.replace(/[^a-zA-Z0-9]/g, "-");
+            const barId = `bar-${sanitize(geschlecht)}-${sanitize(klasse)}-${i}`;
+            const barWidth = Math.min(100, (t.max_kgf / referenz_kgf) * 100);
+            const el = document.getElementById(barId);
+            if (el) {
+              setTimeout(() => {
+                el.style.width = `${barWidth}%`;
+              }, 100);
+            }
+          });
+        });
+
+        // Nach dem Aufbau: Gewichtskorrigierte Werte ergänzen
+        fetch("/vergleich_daten")
+          .then(response => response.json())
+          .then(vergleichsdaten => {
+            const datenMap = {};
+            vergleichsdaten.forEach(e => datenMap[e.pseudonym] = e);
+
+            document.querySelectorAll("tbody tr").forEach(row => {
+              const cells = row.querySelectorAll("td");
+              if (cells.length >= 4) {
+                const pseudonym = cells[1].textContent.trim();
+                const vergleich = datenMap[pseudonym];
+                if (vergleich) {
+                  const extraDiv = document.createElement("div");
+                  extraDiv.innerHTML = `
+                    <small>
+                      Gewichtskorrigiert: <strong>${vergleich.korrigierte_schlagkraft} kgf</strong><br/>
+                      (${vergleich.prozent_von_referenz}% von ${vergleich.referenz})
+                    </small>
+                  `;
+                  cells[3].appendChild(extraDiv);
+                }
+              }
+            });
+          });
       });
-    });
-</script>
-    <!-- footer.html -->
-<footer class="footer">
-  <div class="footer-container">
-    <div class="footer-left">
-      <h2 class="footer-logo">AllInSport</h2>
-      <p class="footer-tagline">Train smart. Strike hard.</p>
+  </script>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <h2 class="footer-logo">AllInSport</h2>
+        <p class="footer-tagline">Train smart. Strike hard.</p>
+      </div>
     </div>
-  </div>
-  <div class="footer-bottom">
-    <p>© 2025 AllInSport Created by Paul Salomon. All rights reserved.</p>
-  </div>
-</footer>
+    <div class="footer-bottom">
+      <p>© 2025 AllInSport Created by Paul Salomon. All rights reserved.</p>
+    </div>
+  </footer>
 </body>
 </html>
-
