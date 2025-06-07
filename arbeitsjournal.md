@@ -132,7 +132,35 @@ Schlagkraft: $200*1.6143=322.86$
 ✅ Wenn eine Person mehrmals Schlägt soll immer nur das letzte Ergebnis in der Rangliste aufgeführt werden. Der gleiche Kunde soll bei $n$ Versuchen nicht $n$ Mal
 in der Rangliste aufgelistet werden.
 
-__Anpassung__
+✅ Als Leichtgewicht, sowohl Frauen als auch Männer, möchte ich mich nicht mit einem Schwergewicht messen müssen, um einen fairen Vergleich zu haben. Daher sollte ein Gewichtkoeffizient eingebaut werden, um die Vergleichbarkeit zu gewährleisten.Gewichtkoeffizient einbauen:
+ 
+ ```python
+ if geschlecht == "maennlich":
+            ref_max = tyson_max_kgf
+            ref_gewicht = tyson_gewicht
+            ref_name = "Mike Tyson"
+        else:
+            ref_max = halmich_max_kgf
+            ref_gewicht = halmich_gewicht
+            ref_name = "Regina Halmich"
+
+        # Gewichtskorrigierte Schlagkraft
+        gewicht_koeff = ref_gewicht / kunde.gewicht
+        korrigierte_schlagkraft = messung.max_kgf * gewicht_koeff
+ ```
+
+✅ Als User möchte ich dass sich die Rangliste alle 10 Sekunden aktualisiert damit ich immer den aktuellsten Stand sehen kann.
+
+ ```javascript
+// Erste Initialisierung
+    ladeRangliste();
+// Alle 10 Sekunden neu laden
+    setInterval(ladeRangliste, 10000);
+ ```
+
+ ✅ Responsivität bei der Mobileansicht prüfen (Balken)
+ - CSS rangliste angepasst.
+
 
 
 
