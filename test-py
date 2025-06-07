@@ -1,0 +1,45 @@
+from sqlalchemy import select, func
+from sqlalchemy.orm import aliased
+from sqlalchemy.sql import distinct
+from sqlalchemy import desc
+
+@app.get("/vergleich_daten")
+def vergleich_daten():
+    db = SessionLocal()
+
+    # Subquery: Nur die max(id) je Kunde (damit die letzte Messung)
+    subq = (
+        db.query(
+            Messung.kunde_id,
+            func.max(Messung.id).label("max_id")  # alternativ: func.max(Messung.created_at)
+        )
+        .group_by(Messung.kunde_id)
+        .subquery()
+    )
+
+    # Join mit Hauptquery
+    latest_messungen = (
+        db.query(Messung)
+        .join(subq, Messung.id == subq.c.max_id)
+        .options(joinedload(Messung.kunde))
+        .all()
+    )
+
+    db.close()
+
+    tyson_max = 453  # kg
+
+    daten = []
+    for messung in latest_messungen:
+        kunde = messung.kunde
+        if not kunde or not messung.max_kgf:
+            continue
+
+        daten.append({
+            "pseudonym": kunde.pseudonym,
+            "prozent_von_tyson": round((messung.max_kgf / tyson_max) * 100, 1)
+        })
+
+    daten.sort(key=lambda x: x["prozent_von_tyson"], reverse=True)
+
+    return daten

@@ -6,18 +6,21 @@ import os
 from datetime import datetime
 import csv
 from io import StringIO
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, create_engine, desc, func
+from sqlalchemy import DateTime, Column, Integer, String, Float, ForeignKey, create_engine, desc, func,select
 from sqlalchemy.orm import sessionmaker, declarative_base, relationship, joinedload
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.pool import StaticPool
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from datetime import datetime
-from sqlalchemy import DateTime
+
 
 
 
 DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL is not set")
+
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
@@ -32,7 +35,7 @@ engine = create_engine(
 """
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
-#Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 
 class Kunde(Base):
@@ -58,7 +61,8 @@ class Messung(Base):
     avg_joule = Column(Float)
     max_kgf = Column(Float)
     avg_kgf = Column(Float)
-    datum = Column(DateTime, default=datetime.now)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+    #datum = Column(DateTime, default=datetime.now)
     kunde = relationship("Kunde", back_populates="messungen")
 
 Base.metadata.create_all(bind=engine)
@@ -152,7 +156,8 @@ def vergleich_daten():
     messungen = db.query(Messung).options(joinedload(Messung.kunde)).all()
     db.close()
 
-    tyson_max = 453  # kg – als 100 % Referenzwert
+    tyson_max = 453  # kg – Mike Tyson
+    halmich_max = 240  # kg – Regina Halmich
 
     daten = []
     for messung in messungen:
@@ -160,15 +165,21 @@ def vergleich_daten():
         if not kunde or not messung.max_kgf:
             continue
 
+        geschlecht = kunde.geschlecht.strip().lower()
+        referenz = tyson_max if geschlecht == "maennlich" else halmich_max
+        referenz_name = "Mike Tyson" if geschlecht == "maennlich" else "Regina Halmich"
+
         daten.append({
             "pseudonym": kunde.pseudonym,
-            "prozent_von_tyson": round((messung.max_kgf / tyson_max) * 100, 1)
+            "prozent_von_referenz": round((messung.max_kgf / referenz) * 100, 1),
+            "referenz": referenz_name
         })
 
-    # Optional: nach Schlagkraft sortieren
-    daten.sort(key=lambda x: x["prozent_von_tyson"], reverse=True)
+    # Sortierung optional
+    daten.sort(key=lambda x: x["prozent_von_referenz"], reverse=True)
 
     return daten
+
 
 @app.get("/rangliste_daten")
 def rangliste_daten():
@@ -186,8 +197,29 @@ def rangliste_daten():
                 return f"{g}kg"
         return f"+{grenzen[0]}kg"
 
+    # Subquery: Nur letzte Messung je Kunde
+    subquery = (
+        db.query(
+            Messung.kunde_id,
+            func.max(Messung.timestamp).label("max_timestamp")
+        )
+        .group_by(Messung.kunde_id)
+        .subquery()
+    )
+
+    # Nur die letzten Messungen pro Kunde abrufen
+    messungen = (
+        db.query(Messung)
+        .join(
+            subquery,
+            (Messung.kunde_id == subquery.c.kunde_id) &
+            (Messung.timestamp == subquery.c.max_timestamp)
+        )
+        .options(joinedload(Messung.kunde))
+        .all()
+    )
+
     rang_ungeordnet = {}
-    messungen = db.query(Messung).options(joinedload(Messung.kunde)).all()
 
     for messung in messungen:
         kunde = messung.kunde
@@ -196,7 +228,6 @@ def rangliste_daten():
         geschlecht = kunde.geschlecht.strip().capitalize()
         klasse = gewichtsklasse(geschlecht, kunde.gewicht)
         key = f"{geschlecht} - {klasse}"
-
         if key not in rang_ungeordnet:
             rang_ungeordnet[key] = []
 
@@ -210,7 +241,6 @@ def rangliste_daten():
     for teilnehmer in rang_ungeordnet.values():
         teilnehmer.sort(key=lambda x: x["max_kgf"], reverse=True)
 
-    # Sortierreihenfolge definieren
     def sort_key(k):
         try:
             geschlecht, klasse = k.split(" - ")
@@ -292,7 +322,7 @@ def export_messung():
             if messung.kunde_id == kunde.id:
                 writer.writerow([
                     kunde.id, kunde.pseudonym, kunde.vorname, kunde.name, kunde.geschlecht,
-                    messung.max_kgf, messung.avg_kgf, messung.datum
+                    messung.max_kgf, messung.avg_kgf, messung.timestamp
                 ])
 
     output.seek(0)

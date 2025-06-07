@@ -101,6 +101,8 @@ Im Endpoint `@app.post("/messung")` werden dann einmal die mittlere und maximale
 ## ToDo  ✅
 
 - Deployment-Fehler beheben.
+- Wenn eine Person mehrmals Schlägt soll immer nur das letzte Ergebnis in der Rangliste aufgeführt werden. Der gleiche Kunde soll bei $n$ Versuchen nicht $n$ Mal
+in der Rangliste aufgelistet werden.
 -  Als Frau möchte ich mich nicht mir Mike Tyson messen müssen sondern mit einer Bekannten Boxerin wir z.B Regina Halmich, um ein für eine Frau vergleichbares Ergebnis zu erhalten.
 
 - Als Leichtgewicht, sowohl Frauen als auch Männer, möchte ich mich nicht mit einem Schwergewicht messen müssen, um einen fairen Vergleich zu haben. Daher sollte ein Gewichtkoeffizient eingebaut werden, um die Vergleichbarkeit zu gewährleisten.Gewichtkoeffizient einbauen:
@@ -126,6 +128,14 @@ Schlagkraft: $200*1.6143=322.86$
 
 
 ## Done
+
+✅ Wenn eine Person mehrmals Schlägt soll immer nur das letzte Ergebnis in der Rangliste aufgeführt werden. Der gleiche Kunde soll bei $n$ Versuchen nicht $n$ Mal
+in der Rangliste aufgelistet werden.
+
+__Anpassung__
+
+
+
 
 
 
