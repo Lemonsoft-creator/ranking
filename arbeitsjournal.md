@@ -95,3 +95,37 @@ Im Endpoint `@app.post("/messung")` werden dann einmal die mittlere und maximale
 
 ## Worked
 - 3 Stund
+
+# 07.06.2025
+
+## ToDo  ✅
+
+- Deployment-Fehler beheben.
+-  Als Frau möchte ich mich nicht mir Mike Tyson messen müssen sondern mit einer Bekannten Boxerin wir z.B Regina Halmich, um ein für eine Frau vergleichbares Ergebnis zu erhalten.
+
+- Als Leichtgewicht, sowohl Frauen als auch Männer, möchte ich mich nicht mit einem Schwergewicht messen müssen, um einen fairen Vergleich zu haben. Daher sollte ein Gewichtkoeffizient eingebaut werden, um die Vergleichbarkeit zu gewährleisten.Gewichtkoeffizient einbauen:
+
+  - Tyson Gewicht: $113Kg$
+  - Person Gewicht: $70Kg$
+  - Koeffizient: $1,6143$
+  - Schlagkraft: $200Kg$
+
+Formel: $113/70=1,6143x200kg$
+
+Schlagkraft: $200*1.6143=322.86$
+
+- Als Benutzer möchte ich, dass die Verlinkung zur Admin-Seite beim Button oben rechts bei der Registrierung und der Rangliste entfernt wird, damit die Benutzeroberfläche klarer und benutzerfreundlicher ist.
+
+- Responsivität bei der Mobileansicht prüfen (Balken)
+
+- Als User möchte ich dass sich die Rangliste alle 10 Sekunden aktualisiert damit ich immer den aktuellsten Stand sehen kann.
+
+- Als Benutzer möchte ich, dass auf der Registrierungsseite das Eingabefeld für den Vornamen zuoberst steht und nicht das für den Nachnamen, damit die Eingabe für den Kunden logischer und intuitiver ist.
+
+- Haftungsausschluss für die Nutzung des PowerKube am MUV-Festival 2025
+
+
+## Done
+
+
+
