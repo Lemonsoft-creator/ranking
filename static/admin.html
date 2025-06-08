@@ -3,347 +3,134 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PowerKube Rangliste</title>
+  <title>Admin Cockpit</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/admin-button.css"/>
   <style>
     body {
       font-family: 'Signika', sans-serif;
-      background: #f9fafb;
-      margin: 0;
+      background-color: #f4f6f9;
       padding: 1rem;
     }
 
     h1 {
+      font-size: 1.5rem;
       text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: center;
       margin-bottom: 2rem;
-      font-size: 1.8rem;
     }
 
-    .abschnitt {
-      margin-top: 2rem;
+    .buttons a {
+      flex: 1 1 150px;
+      text-align: center;
+      text-decoration: none;
+      background: #3b82f6;
+      color: white;
+      font-weight: bold;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
     }
 
-    .abschnitt h2 {
-      font-size: 1.3rem;
-      border-bottom: 2px solid #3b82f6;
-      margin-bottom: 1rem;
-      padding-bottom: 0.3rem;
+    .buttons a:hover {
+      background: #2563eb;
     }
 
-    .gruppe {
+    .card {
       background: white;
       border-radius: 12px;
       padding: 1rem;
-      margin-bottom: 1.2rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
-    .gruppe h3 {
-      font-size: 1.1rem;
+    .card h2 {
+      font-size: 1.2rem;
       margin-bottom: 0.75rem;
-      color: #111827;
       border-bottom: 1px solid #e5e7eb;
       padding-bottom: 0.5rem;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
+    .list-group {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .list-group-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem;
+      border-bottom: 1px solid #e5e7eb;
       font-size: 0.95rem;
     }
 
-    th, td {
-      text-align: left;
-      padding: 0.5rem;
-      vertical-align: top;
-    }
-
-    tr:nth-child(even) {
-      background: #f3f4f6;
-    }
-
-    .medaille {
+    .btn-del {
+      background: #ef4444;
+      color: white;
+      padding: 0.4rem 0.7rem;
+      border-radius: 6px;
       font-weight: bold;
+      font-size: 0.85rem;
+      text-decoration: none;
     }
 
-    .🥇 { color: gold; }
-    .🥈 { color: silver; }
-    .🥉 { color: #cd7f32; }
-
-    .bar-container {
-      height: 1rem;
-      background: #e5e7eb;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-bottom: 0.3rem;
-      position: relative;
+    .btn-del:hover {
+      background: #dc2626;
     }
-
-    .bar {
-      height: 100%;
-      transition: width 1s ease-in-out;
-    }
-
-    .tyson-bar {
-      background-color: #f75b8f; 
-    }
-
-    .user-bar {
-      background-color: #3b82f6; 
-      width: 0;
-    }
-
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 1.5rem;
-      }
-      .gruppe h3 {
-        font-size: 1rem;
-      }
-    }
-
-    .footer {
-      background-color: #000000;
-      color: #222;
-      font-family: 'Signika', sans-serif;
-      padding: 0.3rem 0.6rem;
-      width: 100%;
-      box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.05);
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 40px;
-      z-index: 10;
-    }
-
-    .footer-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.2rem;
-      text-align: center;
-    }
-
-    .footer-logo {
-      margin: 0;
-      font-size: 1.3rem;
-      font-weight: bold;
-      color: #ffffff;
-      line-height: 1.2;
-    }
-
-    .footer-tagline {
-      font-size: 0.75rem;
-      color: #ffffff;
-      margin: 0;
-      line-height: 1.2;
-    }
-
-    .footer-right {
-      display: none; 
-    }
-
-    .footer-bottom {
-      display: none; 
-    }
-
-    @media (min-width: 640px) {
-      .footer-container {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .footer-left {
-        text-align: left;
-      }
-
-      .footer-right {
-        justify-content: flex-end;
-      }
-    }
-    @media (max-width: 600px) {
-  table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  th, td {
-    font-size: 0.85rem;
-    padding: 0.4rem;
-  }
-
-  .bar-container {
-    height: 0.8rem;
-  }
-
-  .gruppe {
-    padding: 0.8rem;
-  }
-
-  .abschnitt h2 {
-    font-size: 1.1rem;
-  }
-
-  .footer-logo {
-    font-size: 1rem;
-  }
-
-  .footer-tagline {
-    font-size: 0.65rem;
-  }
-}
-table::-webkit-scrollbar {
-  height: 6px;
-}
-table::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 3px;
-}
-
   </style>
 </head>
-
 <body>
-  <a href="/static/admin.html" class="admin-button" aria-label="Zur Startseite">
-    <img src="/static/img/allinsport_logo_small.JPG" alt="Logo" class="home-logo" />
-  </a>
-  <h1>🏆 PowerKube Rangliste</h1>
 
-  <div class="abschnitt" id="maennlich">
-    <h2>👨 Männer</h2>
+  <h1>⚙️ Admin Cockpit</h1>
+
+  <div class="buttons">
+    <a href="/static/kunde_registrieren.html">📝 Registrieren</a>
+    <a href="/static/messung_eintragen.html">📊 Messung</a>
+    <a href="/static/rangliste.html">🏆 Rangliste</a>
+    <a href="/export_csv">📁 Kunden exportieren</a>
+    <a href="/export_messung">📁 Messungen exportieren</a>
   </div>
 
-  <div class="abschnitt" id="weiblich">
-    <h2>👩 Frauen</h2>
+  <div class="card">
+    <h2>📈 Statistiken</h2>
+    <p>👥 Anzahl Kunden: <strong id="anzahl">...</strong></p>
+    <p>👨 Männer: <strong id="maenner">...</strong></p>
+    <p>👩 Frauen: <strong id="frauen">...</strong></p>
+    <p>💪 Höchste Schlagkraft Männer: <strong id="max_mann">...</strong> kg</p>
+    <p>💪 Höchste Schlagkraft Frauen: <strong id="max_frau">...</strong> kg</p>
   </div>
 
-   <script>
-    function ladeRangliste() {
-      fetch("/rangliste_daten")
-        .then(response => response.json())
-        .then(data => {
-          // Alte Inhalte löschen
-          document.getElementById("maennlich").innerHTML = '<h2>👨 Männer</h2>';
-          document.getElementById("weiblich").innerHTML = '<h2>👩 Frauen</h2>';
+  <div class="card">
+    <h2>👥 Kundenliste</h2>
+    <ul class="list-group" id="kundenliste"></ul>
+  </div>
 
-          const sortierteKeys = Object.keys(data).sort((a, b) => {
-            const [geschlechtA, klasseA] = a.split(" - ");
-            const [geschlechtB, klasseB] = b.split(" - ");
-            const val = klasse => {
-              const num = parseFloat(klasse.replace("+", "").replace("-", "").replace("kg", ""));
-              return klasse.includes("+") ? num + 1000 : num;
-            };
-            if (geschlechtA !== geschlechtB) return geschlechtA === "Maennlich" ? -1 : 1;
-            return val(klasseB) - val(klasseA);
-          });
+  <script>
+    fetch('/admin_daten')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('anzahl').textContent = data.anzahl;
+        document.getElementById('maenner').textContent = data.maenner;
+        document.getElementById('frauen').textContent = data.frauen;
+        document.getElementById('max_mann').textContent = data.max_mann;
+        document.getElementById('max_frau').textContent = data.max_frau;
 
-          sortierteKeys.forEach(key => {
-            const [geschlecht, klasse] = key.split(" - ");
-            const teilnehmer = data[key];
-            const referenz_kgf = geschlecht === "Maennlich" ? 453 : 240;
-            const referenz_name = geschlecht === "Maennlich" ? "Mike Tyson" : "Regina Halmich";
-
-            const block = document.createElement("div");
-            block.className = "gruppe";
-            block.innerHTML = `<h3>${klasse}</h3>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Platz</th>
-                    <th>Pseudonym</th>
-                    <th>💪 Schlagkraft (Kilogramm-Kraft)</th>
-                    <th>🔋 Vergleich zu ${referenz_name} (${referenz_kgf} kgf)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${teilnehmer.map((t, i) => {
-                    const platz = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : i + 1;
-                    const prozent = Math.min(100, (t.max_kgf / referenz_kgf) * 100).toFixed(1);
-                    const sanitize = str => str.replace(/[^a-zA-Z0-9]/g, "-");
-                    const barId = `bar-${sanitize(geschlecht)}-${sanitize(klasse)}-${i}`;
-                    return `<tr>
-                      <td class="medaille ${platz}">${platz}</td>
-                      <td>${t.pseudonym}</td>
-                      <td>${t.max_kgf.toFixed(1)}</td>
-                      <td>
-                        <div class="bar-container">
-                          <div class="bar tyson-bar" style="width: 100%;"></div>
-                        </div>
-                        <div class="bar-container">
-                          <div class="bar user-bar" id="${barId}"></div>
-                        </div>
-                        ${prozent}% Schlagkraft von ${referenz_name}
-                      </td>
-                    </tr>`;
-                  }).join("")}
-                </tbody>
-              </table>`;
-            
-            document.getElementById(geschlecht.toLowerCase()).appendChild(block);
-
-            teilnehmer.forEach((t, i) => {
-              const sanitize = str => str.replace(/[^a-zA-Z0-9]/g, "-");
-              const barId = `bar-${sanitize(geschlecht)}-${sanitize(klasse)}-${i}`;
-              const barWidth = Math.min(100, (t.max_kgf / referenz_kgf) * 100);
-              const el = document.getElementById(barId);
-              if (el) {
-                setTimeout(() => {
-                  el.style.width = `${barWidth}%`;
-                }, 100);
-              }
-            });
-          });
-
-          fetch("/vergleich_daten")
-            .then(response => response.json())
-            .then(vergleichsdaten => {
-              const datenMap = {};
-              vergleichsdaten.forEach(e => datenMap[e.pseudonym] = e);
-              document.querySelectorAll("tbody tr").forEach(row => {
-                const cells = row.querySelectorAll("td");
-                if (cells.length >= 4) {
-                  const pseudonym = cells[1].textContent.trim();
-                  const vergleich = datenMap[pseudonym];
-                  if (vergleich) {
-                    const extraDiv = document.createElement("div");
-                    extraDiv.innerHTML = `
-                      <small>
-                        Gewichtskorrigiert: <strong>${vergleich.korrigierte_schlagkraft} kgf</strong><br/>
-                        (${vergleich.prozent_von_referenz}% von ${vergleich.referenz})
-                      </small>
-                    `;
-                    cells[3].appendChild(extraDiv);
-                  }
-                }
-              });
-            });
+        const liste = document.getElementById('kundenliste');
+        data.kunden.forEach(k => {
+          const li = document.createElement('li');
+          li.className = 'list-group-item';
+          li.innerHTML = `<span>${k.pseudonym} (${k.vorname} ${k.name}) - ${k.geschlecht}</span>
+                          <a href="/admin_loeschen?id=${k.id}" class="btn-del">🗑️</a>`;
+          liste.appendChild(li);
         });
-    }
-
-    // Erste Initialisierung
-    ladeRangliste();
-    // Alle 10 Sekunden neu laden
-    setInterval(ladeRangliste, 10000);
+      });
   </script>
-
-  <footer class="footer">
-    <div class="footer-container">
-      <div class="footer-left">
-        <h2 class="footer-logo">AllInSport</h2>
-        <p class="footer-tagline">Train smart. Strike hard.</p>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>© 2025 AllInSport Created by Paul Salomon. All rights reserved.</p>
-    </div>
-  </footer>
 </body>
 </html>
