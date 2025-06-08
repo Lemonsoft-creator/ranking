@@ -17,8 +17,7 @@ from dotenv import load_dotenv
 # Lädt .env Datei
 load_dotenv()
 
-DATABASE_URL='postgresql://powerkube_ranking_user:viPVXGJ12PDmoluVdxcyMoSiJM801u9M@dpg-d12q02mmcj7s73fkv8bg-a.frankfurt-postgres.render.com/powerkube_ranking'
-
+DATABASE_URL = os.environ.get('DATABASE_URL')
 if not DATABASE_URL:
     raise RuntimeError('DATABASE_URL is not set')
 
