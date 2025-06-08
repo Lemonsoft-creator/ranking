@@ -6,4 +6,5 @@ services:
     startCommand: uvicorn main:app --host 0.0.0.0 --port 10000
     envVars:
       - key: DATABASE_URL
-        value: postgresql://muv_rangliste_2025_user:XOHxNnFuI2DtT5n9QygV1RtzozMWV0IF@dpg-cvr7thvgi27c738ndvcg-a/muv_rangliste_2025
+        value: postgresql://powerkube_ranking_user:viPVXGJ12PDmoluVdxcyMoSiJM801u9M@dpg-d12q02mmcj7s73fkv8bg-a.frankfurt-postgres.render.com/powerkube_ranking
+
