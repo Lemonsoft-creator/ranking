@@ -224,12 +224,17 @@ table::-webkit-scrollbar-thumb {
   <div class="abschnitt" id="weiblich">
     <h2>👩 Frauen</h2>
   </div>
-
-   <script>
-    function ladeRangliste() {
-      fetch("/rangliste_daten")
+<script>
+function ladeRangliste() {
+  fetch("/rangliste_daten")
+    .then(response => response.json())
+    .then(data => {
+      fetch("/vergleich_daten")
         .then(response => response.json())
-        .then(data => {
+        .then(vergleichsdaten => {
+          const datenMap = {};
+          vergleichsdaten.forEach(e => datenMap[e.pseudonym] = e);
+
           // Alte Inhalte löschen
           document.getElementById("maennlich").innerHTML = '<h2>👨 Männer</h2>';
           document.getElementById("weiblich").innerHTML = '<h2>👩 Frauen</h2>';
@@ -269,6 +274,13 @@ table::-webkit-scrollbar-thumb {
                     const prozent = Math.min(100, (t.max_kgf / referenz_kgf) * 100).toFixed(1);
                     const sanitize = str => str.replace(/[^a-zA-Z0-9]/g, "-");
                     const barId = `bar-${sanitize(geschlecht)}-${sanitize(klasse)}-${i}`;
+                    const vergleich = datenMap[t.pseudonym];
+                    const vergleichHTML = vergleich ? `
+                      <small>
+                        Gewichtskorrigiert: <strong>${vergleich.korrigierte_schlagkraft} kgf</strong><br/>
+                        (${vergleich.prozent_von_referenz}% von ${vergleich.referenz})
+                      </small>
+                    ` : "";
                     return `<tr>
                       <td class="medaille ${platz}">${platz}</td>
                       <td>${t.pseudonym}</td>
@@ -281,12 +293,13 @@ table::-webkit-scrollbar-thumb {
                           <div class="bar user-bar" id="${barId}"></div>
                         </div>
                         ${prozent}% Schlagkraft von ${referenz_name}
+                        ${vergleichHTML}
                       </td>
                     </tr>`;
                   }).join("")}
                 </tbody>
               </table>`;
-            
+
             document.getElementById(geschlecht.toLowerCase()).appendChild(block);
 
             teilnehmer.forEach((t, i) => {
@@ -301,38 +314,15 @@ table::-webkit-scrollbar-thumb {
               }
             });
           });
-
-          fetch("/vergleich_daten")
-            .then(response => response.json())
-            .then(vergleichsdaten => {
-              const datenMap = {};
-              vergleichsdaten.forEach(e => datenMap[e.pseudonym] = e);
-              document.querySelectorAll("tbody tr").forEach(row => {
-                const cells = row.querySelectorAll("td");
-                if (cells.length >= 4) {
-                  const pseudonym = cells[1].textContent.trim();
-                  const vergleich = datenMap[pseudonym];
-                  if (vergleich) {
-                    const extraDiv = document.createElement("div");
-                    extraDiv.innerHTML = `
-                      <small>
-                        Gewichtskorrigiert: <strong>${vergleich.korrigierte_schlagkraft} kgf</strong><br/>
-                        (${vergleich.prozent_von_referenz}% von ${vergleich.referenz})
-                      </small>
-                    `;
-                    cells[3].appendChild(extraDiv);
-                  }
-                }
-              });
-            });
         });
-    }
+    });
+}
 
-    // Erste Initialisierung
-    ladeRangliste();
-    // Alle 10 Sekunden neu laden
-    setInterval(ladeRangliste, 10000);
-  </script>
+// Erste Initialisierung
+ladeRangliste();
+// Alle 10 Sekunden neu laden
+setInterval(ladeRangliste, 10000);
+</script>
 
   <footer class="footer">
     <div class="footer-container">

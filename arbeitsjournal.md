@@ -161,6 +161,9 @@ in der Rangliste aufgelistet werden.
  ✅ Responsivität bei der Mobileansicht prüfen (Balken)
  - CSS rangliste angepasst.
 
+ ## Worked
+- 6 Stund
+
 
 
 
