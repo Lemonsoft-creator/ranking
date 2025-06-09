@@ -6,7 +6,7 @@
   <title>PowerKube Rangliste</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/admin-button.css"/>
-  <style>
+    <style>
     body {
       font-family: 'Signika', sans-serif;
       background: #f9fafb;
@@ -59,6 +59,10 @@
       vertical-align: top;
     }
 
+    td:last-child {
+      min-width: 280px;
+    }
+
     tr:nth-child(even) {
       background: #f3f4f6;
     }
@@ -76,8 +80,9 @@
       background: #e5e7eb;
       border-radius: 4px;
       overflow: hidden;
-      margin-bottom: 0.3rem;
+      margin: 0.4rem 0;
       position: relative;
+      min-width: 250px;
     }
 
     .bar {
@@ -86,13 +91,36 @@
     }
 
     .tyson-bar {
-      background-color: #f75b8f; 
+      background-color: #f75b8f;
     }
 
-    .user-bar {
-      background-color: #3b82f6; 
+    .korrigiert-bar {
+      background-color: #10b981;
       width: 0;
     }
+
+    .legende {
+      font-size: 0.85rem;
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    .legende span {
+      display: inline-block;
+      margin: 0 1rem;
+    }
+
+    .legende .farbe {
+      display: inline-block;
+      width: 1rem;
+      height: 1rem;
+      border-radius: 2px;
+      margin-right: 0.3rem;
+      vertical-align: middle;
+    }
+
+    .farbe.tyson { background-color: #f75b8f; }
+    .farbe.korrigiert { background-color: #10b981; }
 
     @media (max-width: 600px) {
       h1 {
@@ -100,6 +128,30 @@
       }
       .gruppe h3 {
         font-size: 1rem;
+      }
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      th, td {
+        font-size: 0.85rem;
+        padding: 0.4rem;
+      }
+      .bar-container {
+        height: 0.8rem;
+      }
+      .gruppe {
+        padding: 0.8rem;
+      }
+      .abschnitt h2 {
+        font-size: 1.1rem;
+      }
+      .footer-logo {
+        font-size: 1rem;
+      }
+      .footer-tagline {
+        font-size: 0.65rem;
       }
     }
 
@@ -146,11 +198,11 @@
     }
 
     .footer-right {
-      display: none; 
+      display: none;
     }
 
     .footer-bottom {
-      display: none; 
+      display: none;
     }
 
     @media (min-width: 640px) {
@@ -168,54 +220,18 @@
         justify-content: flex-end;
       }
     }
-    @media (max-width: 600px) {
-  table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  th, td {
-    font-size: 0.85rem;
-    padding: 0.4rem;
-  }
-
-  .bar-container {
-    height: 0.8rem;
-  }
-
-  .gruppe {
-    padding: 0.8rem;
-  }
-
-  .abschnitt h2 {
-    font-size: 1.1rem;
-  }
-
-  .footer-logo {
-    font-size: 1rem;
-  }
-
-  .footer-tagline {
-    font-size: 0.65rem;
-  }
-}
-table::-webkit-scrollbar {
-  height: 6px;
-}
-table::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 3px;
-}
-
   </style>
 </head>
-
 <body>
   <a href="/static/admin.html" class="admin-button" aria-label="Zur Startseite">
     <img src="/static/img/allinsport_logo_small.JPG" alt="Logo" class="home-logo" />
   </a>
   <h1>🏆 PowerKube Rangliste</h1>
+
+  <div class="legende">
+    <span><span class="farbe tyson"></span> Tyson / Halmich (100%)</span>
+    <span><span class="farbe korrigiert"></span> Gewichtskorrigierte Schlagkraft</span>
+  </div>
 
   <div class="abschnitt" id="maennlich">
     <h2>👨 Männer</h2>
@@ -224,6 +240,7 @@ table::-webkit-scrollbar-thumb {
   <div class="abschnitt" id="weiblich">
     <h2>👩 Frauen</h2>
   </div>
+
 <script>
 function ladeRangliste() {
   fetch("/rangliste_daten")
@@ -235,7 +252,6 @@ function ladeRangliste() {
           const datenMap = {};
           vergleichsdaten.forEach(e => datenMap[e.pseudonym] = e);
 
-          // Alte Inhalte löschen
           document.getElementById("maennlich").innerHTML = '<h2>👨 Männer</h2>';
           document.getElementById("weiblich").innerHTML = '<h2>👩 Frauen</h2>';
 
@@ -259,6 +275,7 @@ function ladeRangliste() {
             const block = document.createElement("div");
             block.className = "gruppe";
             block.innerHTML = `<h3>${klasse}</h3>
+              <div style="overflow-x: auto;">
               <table>
                 <thead>
                   <tr>
@@ -271,46 +288,44 @@ function ladeRangliste() {
                 <tbody>
                   ${teilnehmer.map((t, i) => {
                     const platz = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : i + 1;
-                    const prozent = Math.min(100, (t.max_kgf / referenz_kgf) * 100).toFixed(1);
-                    const sanitize = str => str.replace(/[^a-zA-Z0-9]/g, "-");
-                    const barId = `bar-${sanitize(geschlecht)}-${sanitize(klasse)}-${i}`;
                     const vergleich = datenMap[t.pseudonym];
+                    const barIdKorr = `bar-korr-${geschlecht}-${klasse}-${i}`;
                     const vergleichHTML = vergleich ? `
+                      <div class="bar-container">
+                        <div class="bar tyson-bar" style="width: 100%;"></div>
+                      </div>
+                      <div class="bar-container">
+                        <div class="bar korrigiert-bar" id="${barIdKorr}"></div>
+                      </div>
                       <small>
                         Gewichtskorrigiert: <strong>${vergleich.korrigierte_schlagkraft} kgf</strong><br/>
                         (${vergleich.prozent_von_referenz}% von ${vergleich.referenz})
                       </small>
                     ` : "";
+
                     return `<tr>
                       <td class="medaille ${platz}">${platz}</td>
                       <td>${t.pseudonym}</td>
                       <td>${t.max_kgf.toFixed(1)}</td>
-                      <td>
-                        <div class="bar-container">
-                          <div class="bar tyson-bar" style="width: 100%;"></div>
-                        </div>
-                        <div class="bar-container">
-                          <div class="bar user-bar" id="${barId}"></div>
-                        </div>
-                        ${prozent}% Schlagkraft von ${referenz_name}
-                        ${vergleichHTML}
-                      </td>
+                      <td>${vergleichHTML}</td>
                     </tr>`;
                   }).join("")}
                 </tbody>
-              </table>`;
+              </table>
+              </div>`;
 
             document.getElementById(geschlecht.toLowerCase()).appendChild(block);
 
             teilnehmer.forEach((t, i) => {
-              const sanitize = str => str.replace(/[^a-zA-Z0-9]/g, "-");
-              const barId = `bar-${sanitize(geschlecht)}-${sanitize(klasse)}-${i}`;
-              const barWidth = Math.min(100, (t.max_kgf / referenz_kgf) * 100);
-              const el = document.getElementById(barId);
-              if (el) {
-                setTimeout(() => {
-                  el.style.width = `${barWidth}%`;
-                }, 100);
+              const vergleich = datenMap[t.pseudonym];
+              if (vergleich) {
+                const barKorrId = `bar-korr-${geschlecht}-${klasse}-${i}`;
+                const korrEl = document.getElementById(barKorrId);
+                if (korrEl) {
+                  setTimeout(() => {
+                    korrEl.style.width = `${Math.min(100, (vergleich.korrigierte_schlagkraft / referenz_kgf) * 100)}%`;
+                  }, 150);
+                }
               }
             });
           });
@@ -318,22 +333,20 @@ function ladeRangliste() {
     });
 }
 
-// Erste Initialisierung
 ladeRangliste();
-// Alle 10 Sekunden neu laden
-setInterval(ladeRangliste, 10000);
+//setInterval(ladeRangliste, 10000);
 </script>
 
-  <footer class="footer">
-    <div class="footer-container">
-      <div class="footer-left">
-        <h2 class="footer-logo">AllInSport</h2>
-        <p class="footer-tagline">Train smart. Strike hard.</p>
-      </div>
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-left">
+      <h2 class="footer-logo">AllInSport</h2>
+      <p class="footer-tagline">Train smart. Strike hard.</p>
     </div>
-    <div class="footer-bottom">
-      <p>© 2025 AllInSport Created by Paul Salomon. All rights reserved.</p>
-    </div>
-  </footer>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 AllInSport Created by Paul Salomon. All rights reserved.</p>
+  </div>
+</footer>
 </body>
 </html>

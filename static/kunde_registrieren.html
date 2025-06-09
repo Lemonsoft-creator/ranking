@@ -45,6 +45,30 @@
       border-radius: 8px;
     }
 
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.2rem;
+      font-size: 0.9rem;
+      flex-wrap: wrap;
+    }
+
+    .checkbox-container input[type="checkbox"] {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+    }
+
+    .checkbox-label {
+      flex: 1;
+    }
+
+    .checkbox-label a {
+      color: #2563eb;
+      text-decoration: underline;
+    }
+
     button {
       width: 100%;
       margin-top: 1.5rem;
@@ -58,7 +82,12 @@
       cursor: pointer;
     }
 
-    button:hover {
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    button:hover:not(:disabled) {
       background: #2563eb;
     }
 
@@ -74,18 +103,18 @@
     }
   </style>
 </head>
- <a href="/static/admin.html" class="admin-button" aria-label="Zur Startseite">
-    <img src="/static/img/allinsport_logo_small.JPG" alt="Logo" class="home-logo" />
-  </a>
+<a href="/static/admin.html" class="admin-button" aria-label="Zur Startseite">
+  <img src="/static/img/allinsport_logo_small.JPG" alt="Logo" class="home-logo" />
+</a>
 <body>
   <div class="container">
     <h1>📝 Kunde registrieren</h1>
     <form method="post" action="/kunde">
-      <label for="name">Nachname</label>
-      <input type="text" name="name" id="name" required>
-
       <label for="vorname">Vorname</label>
       <input type="text" name="vorname" id="vorname" required>
+      
+      <label for="name">Nachname</label>
+      <input type="text" name="name" id="name" required>
 
       <label for="pseudonym">Pseudonym</label>
       <input type="text" name="pseudonym" id="pseudonym" required>
@@ -110,14 +139,14 @@
       </select>
 
       <label for="schlagart">Schlagart</label>
-<select name="schlagart" id="schlagart" required>
-  <option value="">Bitte wählen</option>
-  <option value="Punch">🥊 Punch</option>
-  <option value="Hook">🔄 Hook</option>
-  <option value="Kick">🦵 Kick</option>
-  <option value="Elbow">💪 Elbow</option>
-  <option value="Knee">🦿 Knee</option>
-</select>
+      <select name="schlagart" id="schlagart" required>
+        <option value="">Bitte wählen</option>
+        <option value="Punch">🥊 Punch</option>
+        <option value="Hook">🔄 Hook</option>
+        <option value="Kick">🦵 Kick</option>
+        <option value="Elbow">💪 Elbow</option>
+        <option value="Knee">🦿 Knee</option>
+      </select>
 
       <label for="email">E-Mail</label>
       <input type="email" name="email" required>
@@ -125,8 +154,34 @@
       <label for="plz_ort">PLZ/Ort</label>
       <input type="text" name="plz_ort" required>
 
-      <button type="submit">✅ Jetzt registrieren</button>
+      <div class="checkbox-container">
+        <input type="checkbox" id="dsv-check">
+        <label for="dsv-check" class="checkbox-label">
+          Ich stimme der <a href="https://www.all-in-sport.ch/dsv-powerkube" target="_blank">Datenschutzvereinbarung</a> zu.
+        </label>
+      </div>
+
+      <div class="checkbox-container">
+        <input type="checkbox" id="haftung-check">
+        <label for="haftung-check" class="checkbox-label">
+          Ich akzeptiere den <a href="https://www.all-in-sport.ch/pw-haftungsauschluss" target="_blank">Haftungsausschluss</a>.
+        </label>
+      </div>
+
+      <button type="submit" id="submit-btn" disabled>✅ Jetzt registrieren</button>
     </form>
   </div>
+  <script>
+    const dsvCheck = document.getElementById("dsv-check");
+    const haftungCheck = document.getElementById("haftung-check");
+    const submitBtn = document.getElementById("submit-btn");
+
+    function updateSubmitState() {
+      submitBtn.disabled = !(dsvCheck.checked && haftungCheck.checked);
+    }
+
+    dsvCheck.addEventListener("change", updateSubmitState);
+    haftungCheck.addEventListener("change", updateSubmitState);
+  </script>
 </body>
 </html>

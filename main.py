@@ -13,6 +13,7 @@ from sqlalchemy.pool import StaticPool
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from datetime import datetime
+from dotenv import load_dotenv
 
 # Lädt .env Datei
 load_dotenv()
