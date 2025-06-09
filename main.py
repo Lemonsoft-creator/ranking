@@ -157,15 +157,31 @@ def kunden_json():
 @app.get("/vergleich_daten")
 def vergleich_daten():
     db = SessionLocal()
-    messungen = db.query(Messung).options(joinedload(Messung.kunde)).all()
+
+    subquery = (
+        db.query(
+            Messung.kunde_id,
+            func.max(Messung.timestamp).label("max_timestamp")
+        )
+        .group_by(Messung.kunde_id)
+        .subquery()
+    )
+
+    messungen = (
+        db.query(Messung)
+        .join(
+            subquery,
+            (Messung.kunde_id == subquery.c.kunde_id) &
+            (Messung.timestamp == subquery.c.max_timestamp)
+        )
+        .options(joinedload(Messung.kunde))
+        .all()
+    )
+
     db.close()
 
-    # Referenzwerte
-    tyson_max_kgf = 453
-    tyson_gewicht = 113
-
-    halmich_max_kgf = 240
-    halmich_gewicht = 50
+    tyson_max_kgf, tyson_gewicht = 453, 113
+    halmich_max_kgf, halmich_gewicht = 240, 50
 
     daten = []
 
@@ -175,20 +191,13 @@ def vergleich_daten():
             continue
 
         geschlecht = kunde.geschlecht.strip().lower()
-
         if geschlecht == "maennlich":
-            ref_max = tyson_max_kgf
-            ref_gewicht = tyson_gewicht
-            ref_name = "Mike Tyson"
+            ref_max, ref_gewicht, ref_name = tyson_max_kgf, tyson_gewicht, "Mike Tyson"
         else:
-            ref_max = halmich_max_kgf
-            ref_gewicht = halmich_gewicht
-            ref_name = "Regina Halmich"
+            ref_max, ref_gewicht, ref_name = halmich_max_kgf, halmich_gewicht, "Regina Halmich"
 
-        # Gewichtskorrigierte Schlagkraft
         gewicht_koeff = ref_gewicht / kunde.gewicht
         korrigierte_schlagkraft = messung.max_kgf * gewicht_koeff
-
         prozent = round((korrigierte_schlagkraft / ref_max) * 100, 1)
 
         daten.append({
