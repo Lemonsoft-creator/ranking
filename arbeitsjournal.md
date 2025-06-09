@@ -116,15 +116,15 @@ Formel: $113/70=1,6143x200kg$
 
 Schlagkraft: $200*1.6143=322.86$
 
-- Als Benutzer möchte ich, dass die Verlinkung zur Admin-Seite beim Button oben rechts bei der Registrierung und der Rangliste entfernt wird, damit die Benutzeroberfläche klarer und benutzerfreundlicher ist.
+- ✅ Als Benutzer möchte ich, dass die Verlinkung zur Admin-Seite beim Button oben rechts bei der Registrierung und der Rangliste entfernt wird, damit die Benutzeroberfläche klarer und benutzerfreundlicher ist.
 
-- Responsivität bei der Mobileansicht prüfen (Balken)
+- ✅ Responsivität bei der Mobileansicht prüfen (Balken)
 
-- Als User möchte ich dass sich die Rangliste alle 10 Sekunden aktualisiert damit ich immer den aktuellsten Stand sehen kann.
+- ✅ Als User möchte ich dass sich die Rangliste alle 10 Sekunden aktualisiert damit ich immer den aktuellsten Stand sehen kann.
 
-- Als Benutzer möchte ich, dass auf der Registrierungsseite das Eingabefeld für den Vornamen zuoberst steht und nicht das für den Nachnamen, damit die Eingabe für den Kunden logischer und intuitiver ist.
+- ✅ Als Benutzer möchte ich, dass auf der Registrierungsseite das Eingabefeld für den Vornamen zuoberst steht und nicht das für den Nachnamen, damit die Eingabe für den Kunden logischer und intuitiver ist.
 
-- Haftungsausschluss für die Nutzung des PowerKube am MUV-Festival 2025
+- ✅ Haftungsausschluss für die Nutzung des PowerKube am MUV-Festival 2025
 
 
 ## Done
@@ -164,8 +164,24 @@ in der Rangliste aufgelistet werden.
  ## Worked
 - 6 Stund
 
-
 # 08.06.2025
+
+## Done
+
+- Deplyement zum laufen gebracht.
+
+# 09.06.2025
+
+## Done
+
+✅ Als Benutzer möchte ich, dass auf der Registrierungsseite das Eingabefeld für den Vornamen zuoberst steht und nicht das für den Nachnamen, damit die Eingabe für den Kunden logischer und intuitiver ist.
+
+✅ Haftungsausschluss für die Nutzung des PowerKube am MUV-Festival 2025
+
+
+
+
+
 
 
 
