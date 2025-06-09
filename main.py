@@ -13,7 +13,7 @@ from sqlalchemy.pool import StaticPool
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from datetime import datetime
-from dotenv import load_dotenv
+
 # Lädt .env Datei
 load_dotenv()
 
@@ -79,19 +79,22 @@ def joule_to_kgf(joule: float, weg_in_m: float = 0.3) -> float:
 
 @app.get("/")
 def root():
-    return FileResponse(os.path.join("/static", "rangliste.html"))
+    filepath = "static/rangliste.html"
+    if not os.path.exists(filepath):
+        return HTMLResponse("<h1>404 – Datei nicht gefunden</h1>", status_code=404)
+    return FileResponse(filepath)
 
 @app.get("/registrieren")
 def registrieren():
-    return FileResponse(os.path.join("/static", "kunde_registrieren.html"))
+    return FileResponse(os.path.join("static", "kunde_registrieren.html"))
 
 @app.get("/registrierung_erfolgreich")
 def registrierung_erfolgreich():
-    return FileResponse(os.path.join("/static", "registrierung_erfolgreich.html"))
+    return FileResponse(os.path.join("static", "registrierung_erfolgreich.html"))
 
 @app.get("/messung")
 def messung():
-    return FileResponse(os.path.join("/static", "messung_eintragen.html"))
+    return FileResponse(os.path.join("static", "messung_eintragen.html"))
 
 @app.post("/kunde")
 async def registriere_kunde(
@@ -277,7 +280,7 @@ def rangliste_daten():
 
 @app.get("/admin")
 def admin():
-    return FileResponse(os.path.join("/static", "admin.html"))
+    return FileResponse(os.path.join("static", "admin.html"))
 
 @app.get("/admin_daten")
 def admin_daten():
