@@ -181,7 +181,7 @@ def vergleich_daten():
     db.close()
 
     tyson_max_kgf, tyson_gewicht = 453, 113
-    halmich_max_kgf, halmich_gewicht = 240, 50
+    halmich_max_kgf, halmich_gewicht = 100, 50
 
     daten = []
 

@@ -270,7 +270,7 @@ function ladeRangliste() {
           sortierteKeys.forEach(key => {
             const [geschlecht, klasse] = key.split(" - ");
             const teilnehmer = data[key];
-            const referenz_kgf = geschlecht === "Maennlich" ? 453 : 240;
+            const referenz_kgf = geschlecht === "Maennlich" ? 453 : 100;
             const referenz_name = geschlecht === "Maennlich" ? "Mike Tyson" : "Regina Halmich";
 
             const block = document.createElement("div");
